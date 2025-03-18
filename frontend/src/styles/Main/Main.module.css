@@ -1,0 +1,73 @@
+html::-webkit-scrollbar {
+    display: none;
+}
+.MainContainer {
+    padding: 20px;
+    text-align: center;
+}
+
+.carouselContainer {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.item {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.TapeButtons {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.arrow {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 1.2em;
+}
+
+.arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.Stock, .BestProduct {
+    font-size: 2em;
+    margin: 20px 0;
+    color: #333;
+}
+
+.BestContainerBlocks {
+    margin-top: 20px;
+}
+
+.AllProductsBanner {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.AllProductsBanner h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
