@@ -4,7 +4,7 @@ import footerStyles from '../../styles/Main/Footer.module.css';
 const Footer = () => {
     return (
         <footer className={footerStyles.footer}>
-            <p>© 2023 TechShop. Все права защищены.</p>
+            <p>© 2025 TechShop. Все права защищены.</p>
             <div className={footerStyles.socialLinks}>
                 <a href="https://facebook.com">Facebook</a>
                 <a href="https://twitter.com">Twitter</a>

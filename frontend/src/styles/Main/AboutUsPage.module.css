@@ -1,0 +1,107 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.title {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #282c34;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.sectionTitle {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #282c34;
+}
+
+.sectionText {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.valuesList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.valueItem {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.valueItem::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #ff6600;
+}
+
+.branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.branch {
+    flex: 1 1 calc(33.33% - 20px);
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.branchTitle {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #282c34;
+}
+
+.branchAddress {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.contactList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.contactItem {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+.socialLinks {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.socialLinks a {
+    color: #ff6600;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.socialLinks a:hover {
+    text-decoration: underline;
+}
+
+.mapContainer {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
