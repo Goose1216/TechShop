@@ -3,13 +3,19 @@ import mainStyles from '../../styles/Main/Main.module.css';
 import blockStyle from '../../styles/BlockStyle.module.css';
 import axios from "axios";
 import SalePict from '../../img/SalePict.png';
+import CartImg from '../../img/orange-cart.png';
+import CartImgActive from '../../img/green-cart.png';
 import { Link } from 'react-router-dom';
+import { FaStar } from 'react-icons/fa';
+import AddToCartButton from '../../AddToCartButton.js';
+import { useCart } from '../../CartContext';
 
 const Main = () => {
     const [products, setProducts] = useState([]);
     const [position, setPosition] = useState(0);
     const carouselRef = useRef(null);
     const itemRef = useRef(null);
+    const { setCartQuantity } = useCart(); // Использование контекста корзины
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/v1/products/main/')
@@ -25,7 +31,7 @@ const Main = () => {
     const newProducts = products.filter(item => item.category.some(cat => cat.name === 'Новинка'));
     const discountProducts = products.filter(item => item.category.some(cat => cat.name === 'Выгодно'));
 
-     const scrollCarousel = (direction) => {
+    const scrollCarousel = (direction) => {
         const itemWidth = itemRef.current.offsetWidth;
         const containerWidth = carouselRef.current.offsetWidth;
         const scrollAmount = containerWidth;
@@ -40,7 +46,7 @@ const Main = () => {
 
         if (newPosition > 0) {
             newPosition = -(itemWidth * (3 - 1));
-        } else if (newPosition < -(itemWidth * (3- 1))) {
+        } else if (newPosition < -(itemWidth * (3 - 1))) {
             newPosition = 0;
         }
 
@@ -63,21 +69,46 @@ const Main = () => {
                             <div className={blockStyle.BlockContainer}>
                                 {chunk.map(item => (
                                     <div className={blockStyle.Block} key={item.id}>
-                                        <div>
+                                        <div className={blockStyle.ImageContainer}>
                                             <Link to={`/${item.slug}`}>
-                                                <img src={item.image} alt="Изображение товара" />
+                                                <img src={item.image} alt="Изображение товара" className={blockStyle.ProductImage} />
                                             </Link>
+                                            {item.discount > 0 && (
+                                                <div className={blockStyle.SalePicture}>
+                                                    <img src={SalePict} alt="Скидка" />
+                                                </div>
+                                            )}
                                         </div>
-                                       <h1 className={blockStyle.ProductName}>{item.name}</h1>
-                                       {item.discount > 0 && (
-                                       <div>
-                                          <div className={blockStyle.OldProductPrice}>{item.price_standart.toLocaleString('ru-RU')} ₽</div>
-                                          <div className={blockStyle.SalePicture}>
-                                              <img src={SalePict} alt="Скидка" />
-                                          </div>
-                                       </div>
-                                       )}
-                                        <span className={blockStyle.ProductPrice}>{item.price.toLocaleString('ru-RU')} ₽</span>
+                                        <h1 className={blockStyle.ProductName}>{item.name}</h1>
+                                        <div className={blockStyle.RatingContainer}>
+                                            <div className={blockStyle.starRating}>
+                                                {[...Array(5)].map((_, i) => (
+                                                    <FaStar
+                                                        key={i}
+                                                        color={i < item.total_rate ? '#ffc107' : '#e4e5e9'}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <span className={blockStyle.totalRate}>{item.total_rate}</span>
+                                        </div>
+                                        {item.discount > 0 && (
+                                            <div className={blockStyle.PriceContainer}>
+                                                <span className={blockStyle.OldProductPrice}>{item.price_standart.toLocaleString('ru-RU')} ₽</span>
+                                                <span className={blockStyle.ProductPrice}>{item.price.toLocaleString('ru-RU')} ₽</span>
+                                            </div>
+                                        )}
+                                        {!item.discount && (
+                                            <span className={blockStyle.ProductPrice}>{item.price.toLocaleString('ru-RU')} ₽</span>
+                                        )}
+                                        <div className={blockStyle.AddToCartButton}>
+                                            <AddToCartButton
+                                                imageSrc={CartImg}
+                                                activeImageSrc={CartImgActive}
+                                                productId={item.pk}
+                                                countItem={1}
+                                                setCartQuantity={setCartQuantity}
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -95,21 +126,43 @@ const Main = () => {
                 <div className={blockStyle.BlockContainer}>
                     {discountProducts.map(item => (
                         <div className={blockStyle.Block} key={item.id}>
-                            <div>
+                            <div className={blockStyle.ImageContainer}>
                                 <Link to={`/${item.slug}`}>
-                                    <img src={item.image} alt="Изображение товара" />
+                                    <img src={item.image} alt="Изображение товара" className={blockStyle.ProductImage} />
                                 </Link>
+                                {item.discount > 0 && (
+                                    <div className={blockStyle.SalePicture}>
+                                        <img src={SalePict} alt="Скидка" />
+                                    </div>
+                                )}
                             </div>
                             <h1 className={blockStyle.ProductName}>{item.name}</h1>
-                           {item.discount > 0 && (
-                           <div>
-                              <div className={blockStyle.OldProductPrice}>{item.price_standart.toLocaleString('ru-RU')} ₽</div>
-                              <div className={blockStyle.SalePicture}>
-                                  <img src={SalePict} alt="Скидка" />
-                              </div>
-                           </div>
-                           )}
-                            <span className={blockStyle.ProductPrice}>{item.price.toLocaleString('ru-RU')} ₽</span>
+                            <div className={blockStyle.RatingContainer}>
+                                <div className={blockStyle.starRating}>
+                                    {[...Array(5)].map((_, i) => (
+                                        <FaStar
+                                            key={i}
+                                            color={i < item.total_rate ? '#ffc107' : '#e4e5e9'}
+                                        />
+                                    ))}
+                                </div>
+                                <span className={blockStyle.totalRate}>{item.total_rate}</span>
+                            </div>
+                            <div className={blockStyle.PriceContainer}>
+                                {item.discount > 0 && (
+                                    <span className={blockStyle.OldProductPrice}>{item.price_standart.toLocaleString('ru-RU')} ₽</span>
+                                )}
+                                <span className={blockStyle.ProductPrice}>{item.price.toLocaleString('ru-RU')} ₽</span>
+                            </div>
+                            <div className={blockStyle.AddToCartButton}>
+                                <AddToCartButton
+                                    imageSrc={CartImg}
+                                    activeImageSrc={CartImgActive}
+                                    productId={item.pk}
+                                    countItem={1}
+                                    setCartQuantity={setCartQuantity}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>

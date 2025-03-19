@@ -24,22 +24,13 @@ class ProductList(generics.ListAPIView):
         if brand:
             queryset = self.filter_by_brand(queryset, brand)
 
-        category = self.request.query_params.get('category')
-        if category:
-            queryset = self.filter_by_category(queryset, category)
-
         price = self.request.query_params.get("price")
         if price:
             queryset = self.filter_by_price(queryset, price)
 
         sort_by = self.request.query_params.get("sort")
-        group_by = self.request.query_params.get("group")
-        if sort_by and group_by:
-            queryset = self.sort_results(queryset, group_by, sort_by)
-        elif sort_by and not group_by:
+        if sort_by:
             queryset = self.sort_results(queryset, sort_by)
-        elif group_by:
-            queryset = self.sort_results(queryset, group_by)
 
         queryset = queryset.select_related("brand")
         return queryset
