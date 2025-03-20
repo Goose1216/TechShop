@@ -82,12 +82,21 @@ const Main = () => {
                                         <h1 className={blockStyle.ProductName}>{item.name}</h1>
                                         <div className={blockStyle.RatingContainer}>
                                             <div className={blockStyle.starRating}>
-                                                {[...Array(5)].map((_, i) => (
-                                                    <FaStar
-                                                        key={i}
-                                                        color={i < item.total_rate ? '#ffc107' : '#e4e5e9'}
-                                                    />
-                                                ))}
+                                                {/* Пустые звёзды */}
+                                                <div className={blockStyle.emptyStars}>
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <FaStar key={i} />
+                                                    ))}
+                                                </div>
+                                                {/* Заполненные звёзды */}
+                                                <div
+                                                    className={blockStyle.filledStars}
+                                                    style={{ width: `${(item.total_rate / 5) * 100}%` }}
+                                                >
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <FaStar key={i} color="#ffc107" />
+                                                    ))}
+                                                </div>
                                             </div>
                                             <span className={blockStyle.totalRate}>{item.total_rate}</span>
                                         </div>
@@ -139,12 +148,21 @@ const Main = () => {
                             <h1 className={blockStyle.ProductName}>{item.name}</h1>
                             <div className={blockStyle.RatingContainer}>
                                 <div className={blockStyle.starRating}>
-                                    {[...Array(5)].map((_, i) => (
-                                        <FaStar
-                                            key={i}
-                                            color={i < item.total_rate ? '#ffc107' : '#e4e5e9'}
-                                        />
-                                    ))}
+                                    {/* Пустые звёзды */}
+                                    <div className={blockStyle.emptyStars}>
+                                        {[...Array(5)].map((_, i) => (
+                                            <FaStar key={i} />
+                                        ))}
+                                    </div>
+                                    {/* Заполненные звёзды */}
+                                    <div
+                                        className={blockStyle.filledStars}
+                                        style={{ width: `${(item.total_rate / 5) * 100}%` }}
+                                    >
+                                        {[...Array(5)].map((_, i) => (
+                                            <FaStar key={i} color="#ffc107" />
+                                        ))}
+                                    </div>
                                 </div>
                                 <span className={blockStyle.totalRate}>{item.total_rate}</span>
                             </div>

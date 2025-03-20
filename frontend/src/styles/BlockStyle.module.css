@@ -113,8 +113,21 @@
 }
 
 .starRating {
-    display: flex;
-    gap: 2px;
+    display: inline-flex;
+    position: relative;
+}
+
+.starRating .filledStars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+}
+
+.starRating .emptyStars {
+    color: #e4e5e9;
 }
 
 .totalRate {
