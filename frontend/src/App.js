@@ -5,6 +5,8 @@ import AllProductsPage from './components/Products/AllProductsPage';
 import AboutUs from './components/Main/AboutUs';
 import Footer from './components/Main/Footer';
 import Main from './components/Main/Main';
+import GoogleAuth from './components/Users/GoogleAuth';
+import YandexAuth from './components/Users/YandexAuth';
 import { CartProvider } from './CartContext';
 
 const App = () => {
@@ -17,6 +19,8 @@ const App = () => {
                     <Route path="/" element={<Main />} />
                     <Route path="/products" element={<AllProductsPage />} />
                     <Route path="/about" element={<AboutUs />} />
+                    <Route path="/login/google" element={<GoogleAuth />} />
+                    <Route path="/login/yandex" element={<YandexAuth />} />
                 </Routes>
                 <Footer />
             </div>

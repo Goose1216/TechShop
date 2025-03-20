@@ -1,24 +1,113 @@
 .header {
     background-color: #282c34;
-    padding: 20px;
+    padding: 10px 20px;
     color: white;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    top: 0;
+    z-index: 1000;
 }
 
-.navList {
-    list-style: none;
-    padding: 0;
+.navbar {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.componLeft, .componRight, .other {
+    display: flex;
+    align-items: center;
     gap: 20px;
 }
 
-.navList a {
+.logo {
+    font-size: 1.5em;
+    font-weight: bold;
     color: white;
     text-decoration: none;
-    font-size: 1.1em;
 }
 
-.navList a:hover {
-    text-decoration: underline;
+.animation {
+    transition: color 0.3s ease;
+}
+
+.animation:hover {
+    color: #ff6600;
+}
+
+.otherPoint {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+.otherPoint:hover {
+    color: #ff6600;
+}
+
+.menuItem {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s ease;
+}
+
+.menuItem:hover {
+    color: #ff6600;
+}
+
+.cartQuantity {
+    background-color: #ff6600;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 0.8em;
+}
+
+.verticalLine {
+    width: 1px;
+    height: 20px;
+    background-color: #ccc;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdownItem {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.dropdownItem:hover {
+    background-color: #f1f1f1;
+}
+
+.productsText {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+}
+
+.productsText:hover {
+    color: #ff6600;
 }

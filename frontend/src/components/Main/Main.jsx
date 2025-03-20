@@ -15,7 +15,7 @@ const Main = () => {
     const [position, setPosition] = useState(0);
     const carouselRef = useRef(null);
     const itemRef = useRef(null);
-    const { setCartQuantity } = useCart(); // Использование контекста корзины
+    const { setCartQuantity } = useCart();
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/v1/products/main/')

@@ -21,7 +21,6 @@ const AllProductsPage = () => {
     const [sortOption, setSortOption] = useState('-price');
     const { setCartQuantity } = useCart();
 
-    // Загрузка данных
     useEffect(() => {
         fetchProducts();
     }, [currentPage, sortOption, selectedBrands, minPrice, maxPrice]);
@@ -43,7 +42,6 @@ const AllProductsPage = () => {
             .catch(error => console.error('Ошибка загрузки данных:', error));
     };
 
-    // Обработчики сортировки и фильтрации
     const handleSortChange = (event) => {
         setSortOption(event.target.value);
     };
@@ -71,7 +69,7 @@ const AllProductsPage = () => {
 
     const renderPagination = () => {
     const pages = [];
-    const maxVisiblePages = 3; // Максимальное количество видимых страниц
+    const maxVisiblePages = 3;
     const ellipsis = <span className={allProductsStyles.ellipsis}>...</span>;
 
     pages.push(
