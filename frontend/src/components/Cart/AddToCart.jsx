@@ -2,12 +2,21 @@ import axios from 'axios';
 import { getToken } from '../../authStorage';
 
 const AddToCart = async (productId, setCartQuantity) => {
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     try {
         const token = getToken();
         let response;
         console.log(document.cookie);
+        const csrfToken = getCookie('csrftoken');
+
         if (token) {
-            response = await axios.post('http://localhost:8000/api/v1/carts/',
+            response = await axios.post('http://localhost:8000/api/v1/carts/add/',
                 {
                     product: productId,
                 },
@@ -16,20 +25,22 @@ const AddToCart = async (productId, setCartQuantity) => {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                         'Authorization': `Token ${token}`,
+                        'X-CSRFToken': csrfToken,
                     },
                     withCredentials: true
                 }
             );
         } else {
-            response = await axios.post('http://localhost:8000/api/v1/carts/',
+            response = await axios.post('http://localhost:8000/api/v1/carts/add/',
                 {
                     product: productId,
                 },
                 {
                     headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
                     withCredentials: true
                 }
             );

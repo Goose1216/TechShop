@@ -43,6 +43,38 @@ const Header = () => {
         }
     };
 
+    const fetchCountCartItems = async () => {
+        try {
+            let response_cart
+            const token = getToken();
+            if (token) {
+                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Token ${token}`,
+                        },
+                        withCredentials: true
+                    }
+                );
+            } else {
+                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        withCredentials: true
+                    }
+                );
+            }
+            setCartQuantity(response_cart.data.count);
+        } catch (error) {
+            console.error('Ошибка при получении информации о корзине:', error);
+        }
+    }
+
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -51,6 +83,7 @@ const Header = () => {
 
     useEffect(() => {
         fetchUserInfo();
+        fetchCountCartItems();
     }, [token]);
 
     const handleLogout = async (e) => {

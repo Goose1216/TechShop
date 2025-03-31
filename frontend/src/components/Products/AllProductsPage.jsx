@@ -21,6 +21,12 @@ const AllProductsPage = () => {
     const [sortOption, setSortOption] = useState('-price');
     const { setCartQuantity } = useCart();
 
+     function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     useEffect(() => {
         fetchProducts();
     }, [currentPage, sortOption, selectedBrands, minPrice, maxPrice]);
@@ -33,7 +39,9 @@ const AllProductsPage = () => {
             brand: selectedBrands.join('-'),
         });
 
-        axios.get(`http://127.0.0.1:8000/api/v1/products/list?${params.toString()}`)
+        const csrfToken = getCookie('csrftoken');
+
+        axios.get(`http://localhost:8000/api/v1/products/list?${params.toString()}`, {}, {headers: {'X-CSRFToken': csrfToken }})
             .then(response => {
                 setProducts(response.data.results);
                 setTotalPages(response.data.count_pages);
@@ -124,7 +132,6 @@ const AllProductsPage = () => {
 
     return (
         <div className={allProductsStyles.container}>
-            {/* Фильтры и сортировка */}
             <div className={allProductsStyles.filters}>
                 <div className={allProductsStyles.filterSection}>
                     <h3>Цена</h3>
@@ -171,7 +178,6 @@ const AllProductsPage = () => {
                 </div>
             </div>
 
-            {/* Список товаров */}
             <div className={allProductsStyles.productsGrid}>
                 {products.map(product => (
                     <div key={product.pk} className={allProductsStyles.productCard}>
@@ -201,15 +207,22 @@ const AllProductsPage = () => {
                             />
                         </div>
                          <div className={allProductsStyles.RatingContainer}>
-                        <div className={allProductsStyles.starRating}>
+                       <div className={blockStyle.starRating}>
+                        <div className={blockStyle.emptyStars}>
                             {[...Array(5)].map((_, i) => (
-                                <FaStar
-                                    key={i}
-                                    color={i < product.total_rate ? '#ffc107' : '#e4e5e9'}
-                                />
+                                <FaStar key={i} />
                             ))}
                         </div>
-                        <span className={allProductsStyles.totalRate}>{product.total_rate}</span>
+                        <div
+                            className={blockStyle.filledStars}
+                            style={{ width: `${(product.total_rate / 5) * 100}%` }}
+                        >
+                            {[...Array(5)].map((_, i) => (
+                                <FaStar key={i} color="#ffc107" />
+                            ))}
+                        </div>
+                    </div>
+                    <span className={blockStyle.totalRate}>{product.total_rate}</span>
                     </div>
                     </div>
                 ))}

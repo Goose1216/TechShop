@@ -1,10 +1,11 @@
+
 .cart-container {
   max-width: 1200px;
+  min-height:800px;
   margin: 0 auto;
   padding: 20px;
 }
 
-/* Состояния загрузки и ошибки */
 .cart-container.loading,
 .cart-container.error,
 .cart-container.empty {
@@ -12,7 +13,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50vh;
+  min-height: 80vh;
   text-align: center;
 }
 
@@ -47,7 +48,6 @@
   background-color: #e9ecef;
 }
 
-/* Основные стили */
 .cart-title {
   font-size: 28px;
   margin-bottom: 30px;
@@ -223,7 +223,32 @@
   background-color: #218838;
 }
 
-/* Адаптивность */
+.cart-actions {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.clear-cart-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.clear-cart-button:hover {
+  background-color: #d32f2f;
+}
+
+.clear-cart-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
 @media (max-width: 768px) {
   .cart-content {
     flex-direction: column;
@@ -237,4 +262,80 @@
     align-items: flex-start;
     margin-top: 15px;
   }
+
+  .clear-cart-button {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.success-modal {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.success-modal h3 {
+  color: #4CAF50;
+  margin-bottom: 20px;
+}
+
+.success-modal-close {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.success-modal-close:hover {
+  background-color: #45a049;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-input {
+  width: 40px;
+  text-align: center;
+  margin: 0 5px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.quantity-value {
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+  margin: 0 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.quantity-value:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
 }

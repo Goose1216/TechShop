@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import AddToCartButton from '../../AddToCartButton.js';
 import { useCart } from '../../CartContext';
+import { getToken } from '../../authStorage';
 
 const Main = () => {
     const [products, setProducts] = useState([]);
@@ -17,15 +18,49 @@ const Main = () => {
     const itemRef = useRef(null);
     const { setCartQuantity } = useCart();
 
+     function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const fetchProducts = async () => {
+        const csrfToken = getCookie('csrftoken');
+        const token = getToken();
+
+        try {
+            let response
+            if (token) {
+                response = await axios.get('http://localhost:8000/api/v1/products/main/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Token ${token}`,
+                            'X-CSRFToken': csrfToken,
+                        },
+                        withCredentials: true
+                    }
+                )
+            } else {
+               response = await axios.get('http://localhost:8000/api/v1/products/main/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        withCredentials: true
+                    }
+                )
+                }
+             setProducts(response.data);
+        }  catch (err) {
+            console.log(err);
+        }
+        }
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/v1/products/main/')
-            .then(res => {
-                console.log(res.data);
-                setProducts(res.data);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        fetchProducts();
     }, []);
 
     const newProducts = products.filter(item => item.category.some(cat => cat.name === 'Новинка'));

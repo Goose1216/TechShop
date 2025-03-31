@@ -3,18 +3,29 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CartPage.css';
 import { getToken } from '../../authStorage';
+import { useCart } from '../../CartContext';
 
 const CartPage = () => {
   const [cartData, setCartData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [editingQuantity, setEditingQuantity] = useState(null);
+  const [tempQuantity, setTempQuantity] = useState('');
+  const { setCartQuantity } = useCart();
 
-  useEffect(() => {
-    const fetchCart = async () => {
+   function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+  const fetchCart = async () => {
       try {
         const token = getToken();
         let response;
+        const csrfToken = getCookie('csrftoken');
         if (token) {
             response = await axios.get('http://localhost:8000/api/v1/carts/',
                 {
@@ -22,6 +33,7 @@ const CartPage = () => {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                         'Authorization': `Token ${token}`,
+                        'X-CSRFToken': csrfToken,
                     },
                     withCredentials: true
                 }
@@ -32,47 +44,76 @@ const CartPage = () => {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
                     },
                     withCredentials: true
                 }
             );
         }
         setCartData(response.data);
+        setCartQuantity(response.data.cart_items.length);
       } catch (err) {
         setError(err.response?.data?.message || 'Ошибка при загрузке корзины');
       } finally {
         setIsLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchCart();
   }, []);
 
   const handleRemoveItem = async (productId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/v1/carts/remove/${productId}/`, {
-        withCredentials: true
-      });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               const response = await axios.get('http://localhost:8000/api/v1/carts/get/', {
-        withCredentials: true
-      });
-      setCartData(response.data);
+    const csrfToken = getCookie('csrftoken');
+      const response = await axios.delete(
+        `http://localhost:8000/api/v1/carts/remove/${productId}/`,
+        {
+        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+          withCredentials: true
+        }
+      );
+
+      if (response.status == 200) {
+        setShowSuccessModal(true);
+      }
+
     } catch (err) {
       setError('Не удалось удалить товар');
     }
-  };
+};
 
   const handleUpdateQuantity = async (productId, newQuantity) => {
     if (newQuantity < 1) return;
     try {
+    const csrfToken = getCookie('csrftoken');
       await axios.put(
         `http://localhost:8000/api/v1/carts/update/${productId}/`,
         { quantity: newQuantity },
-        { withCredentials: true }
+        { headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                     withCredentials: true }
       );
       const response = await axios.get('http://localhost:8000/api/v1/carts/', {
+      headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
         withCredentials: true
       });
-      setCartData(response.data);
+
+       if (response.status == 200) {
+       fetchCart();
+      }
+
     } catch (err) {
       setError('Не удалось изменить количество');
     }
@@ -102,7 +143,7 @@ const CartPage = () => {
     return (
       <div className="cart-container empty">
         <h2>Ваша корзина пуста</h2>
-        <Link to="/catalog" className="continue-shopping">Начать покупки</Link>
+        <Link to="/products" className="continue-shopping">Начать покупки</Link>
       </div>
     );
   }
@@ -111,6 +152,32 @@ const CartPage = () => {
     (sum, item) => sum + (item.product.price * item.quantity),
     0
   );
+
+  const startEditing = (productId, currentQuantity) => {
+    setEditingQuantity(productId);
+    setTempQuantity(currentQuantity.toString());
+  };
+
+  const finishEditing = async (productId) => {
+    const quantity = parseInt(tempQuantity);
+    if (!isNaN(quantity)) {
+      await handleUpdateQuantity(productId, quantity);
+    }
+    setEditingQuantity(null);
+  };
+
+  const handleQuantityChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || /^[1-9]\d*$/.test(value)) {
+      setTempQuantity(value);
+    }
+  };
+
+  const handleKeyDown = (e, productId) => {
+    if (e.key === 'Enter') {
+      finishEditing(productId);
+    }
+  };
 
   return (
     <div className="cart-container">
@@ -143,20 +210,39 @@ const CartPage = () => {
                 </div>
 
                 <div className="item-actions">
-                  <div className="quantity-control">
-                    <button
-                      onClick={() => handleUpdateQuantity(item.product.pk, item.quantity - 1)}
-                      disabled={item.quantity <= 1}
-                    >
-                      −
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      onClick={() => handleUpdateQuantity(item.product.pk, item.quantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
+                   <div className="quantity-control">
+                <button
+                  onClick={() => handleUpdateQuantity(item.product.pk, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
+                >
+                  −
+                </button>
+
+                {editingQuantity === item.product.pk ? (
+                  <input
+                    type="text"
+                    value={tempQuantity}
+                    onChange={handleQuantityChange}
+                    onBlur={() => finishEditing(item.product.pk)}
+                    onKeyDown={(e) => handleKeyDown(e, item.product.pk)}
+                    className="quantity-input"
+                    autoFocus
+                  />
+                ) : (
+                  <span
+                    onClick={() => startEditing(item.product.pk, item.quantity)}
+                    className="quantity-value"
+                  >
+                    {item.quantity}
+                  </span>
+                )}
+
+                <button
+                  onClick={() => handleUpdateQuantity(item.product.pk, item.quantity + 1)}
+                >
+                  +
+                </button>
+              </div>
 
                   <button
                     className="remove-item"
@@ -202,11 +288,66 @@ const CartPage = () => {
           >
             Оформить заказ
           </button>
-          <Link to="/catalog" className="continue-shopping">
+          <Link to="/products" className="continue-shopping">
             Продолжить покупки
           </Link>
         </div>
       </div>
+      <div className="cart-actions">
+      <button
+        className="clear-cart-button"
+        onClick={async () => {
+          try {
+            const token = getToken();
+            let deleteResponse;
+            const csrfToken = getCookie('csrftoken');
+
+            if (token) {
+                deleteResponse = await axios.delete('http://localhost:8000/api/v1/carts/delete/', {
+                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'Authorization': `Token ${token}`,
+                                'X-CSRFToken': csrfToken,
+                            },
+                withCredentials: true
+            })} else {
+                deleteResponse = await axios.delete('http://localhost:8000/api/v1/carts/delete/', {
+                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                            },
+                withCredentials: true
+                });
+            }
+             if (deleteResponse.status === 200) {
+                setShowSuccessModal(true);
+              }
+          } catch (err) {
+            setError('Не удалось очистить корзину');
+          }
+        }}
+      >
+        Очистить корзину
+      </button>
+    </div>
+ {showSuccessModal && (
+        <div className="success-modal-overlay">
+          <div className="success-modal">
+            <h3>Корзина успешно обновлена!</h3>
+            <button
+              onClick={() => {
+              setShowSuccessModal(false);
+              fetchCart();
+              }}
+              className="success-modal-close"
+            >
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

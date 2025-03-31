@@ -26,10 +26,17 @@ const YandexAuth = () => {
         const login = async () => {
             try {
                 const response = await axios.post(
-                    'http://127.0.0.1:8000/api/v1/dj-rest-auth/yandex/login/',
+                    'http://localhost:8000/api/v1/dj-rest-auth/yandex/login/',
                     {
                         code: code,
                         id_token: clientId,
+                    },
+                    {
+                         headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        withCredentials: true
                     }
                 );
 

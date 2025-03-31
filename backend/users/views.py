@@ -22,6 +22,32 @@ class YandexLoginView(SocialLoginView):
     callback_url = 'http://localhost:3000/login/yandex'
     client_class = OAuth2Client
 
+    def post(self, request, *args, **kwargs):
+        cart_uuid = self.request.COOKIES.get('cart')
+
+        response = super().post(request, *args, **kwargs)
+
+        user = request.user
+
+        if cart_uuid:
+            try:
+                cart = json.loads(cart_uuid)
+                anonymous_cart = Cart.objects.get(id=cart)
+                new_cart_id = sync_carts_logged_in(anonymous_cart, user)
+
+                week = datetime.datetime.now() + datetime.timedelta(days=7)
+                response.set_cookie('cart', json.dumps(str(new_cart_id)), max_age=week.timestamp(), secure=True, samesite='None')
+            except BaseException as e:
+                pass
+        else:
+            try:
+                cart = Cart.objects.get(user=user)
+                week = datetime.datetime.now() + datetime.timedelta(days=7)
+                response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(), secure=True, samesite='None')
+            except:
+                pass
+        return response
+
 
 def sync_carts_logged_out(user_cart):
     new_cart = Cart.objects.create()
