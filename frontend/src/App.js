@@ -7,6 +7,7 @@ import Footer from './components/Main/Footer';
 import Main from './components/Main/Main';
 import GoogleAuth from './components/Users/GoogleAuth';
 import YandexAuth from './components/Users/YandexAuth';
+import CartPage from './components/Cart/CartPage'
 import { CartProvider } from './CartContext';
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Main />} />
                     <Route path="/products" element={<AllProductsPage />} />
+                    <Route path="/cart" element={<CartPage />} />
                     <Route path="/about" element={<AboutUs />} />
                     <Route path="/login/google" element={<GoogleAuth />} />
                     <Route path="/login/yandex" element={<YandexAuth />} />

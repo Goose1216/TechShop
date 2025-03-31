@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import regStyles from '../../styles/Users/AuthStyles.module.css';
 import blockStyle from '../../styles/BlockStyle.module.css';
 import axios from 'axios';
@@ -7,14 +6,12 @@ import { setToken } from '../../authStorage';
 import GooglePict from '../../img/icons8-google-144.png';
 import YandexPict from '../../img/icons8-яндекс-логотип-50.png';
 import VkPict from '../../img/icons8-vk-96.png';
-import { Link } from 'react-router-dom';
 
-const Login = ({ onClose, fetchUserInfo, switchToRegistration  }) => {
+const Login = ({ onClose, fetchUserInfo, switchToRegistration, setCartQuantity}) => {
     const [emailOrName, setEmailOrName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     const clientIdGoogle = process.env.REACT_APP_GOOGLE_CLIENT_ID;
     const redirectUriGoogle = process.env.REACT_APP_GOOGLE_REDIRECT_URI;
@@ -25,12 +22,17 @@ const Login = ({ onClose, fetchUserInfo, switchToRegistration  }) => {
     const login = async (e) => {
         e.preventDefault();
         setLoading(true);
+        axios.defaults.withCredentials = true;
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/v1/dj-rest-auth/login/', {
+            const response = await axios.post('http://localhost:8000/api/v1/dj-rest-auth/login/', {
                 username: emailOrName,
-                password: password
+                password: password,
             }, {
+                headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
                 withCredentials: true
             });
 
@@ -38,6 +40,32 @@ const Login = ({ onClose, fetchUserInfo, switchToRegistration  }) => {
             setToken(token);
             fetchUserInfo();
             onClose();
+
+            let response_cart
+            if (token) {
+                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Token ${token}`,
+                        },
+                        withCredentials: true
+                    }
+                );
+            } else {
+                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        withCredentials: true
+                    }
+                );
+            }
+            setCartQuantity(response_cart.data.count);
+
         } catch (error) {
             setError('Неправильные учетные данные. Пожалуйста, попробуйте снова.');
             console.error('Ошибка:', error);

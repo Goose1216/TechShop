@@ -197,7 +197,6 @@ const AllProductsPage = () => {
                                 imageSrc={CartImg}
                                 activeImageSrc={CartImgActive}
                                 productId={product.pk}
-                                countItem={1}
                                 setCartQuantity={setCartQuantity}
                             />
                         </div>

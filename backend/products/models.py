@@ -17,7 +17,6 @@ Rate = (
 class Brand(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="Название бренда")
 
-
     class Meta:
         default_related_name = "brands"
         verbose_name = "Бренд"

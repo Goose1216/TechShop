@@ -55,8 +55,9 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.yandex",
 
     #locals
-    'products',
-    'users',
+    'products.apps.ProductsConfig',
+    'cart.apps.CartConfig',
+    'users.apps.UsersConfig',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -184,8 +185,14 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
-
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -196,3 +203,5 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
+
+

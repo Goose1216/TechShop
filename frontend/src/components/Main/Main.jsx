@@ -82,13 +82,11 @@ const Main = () => {
                                         <h1 className={blockStyle.ProductName}>{item.name}</h1>
                                         <div className={blockStyle.RatingContainer}>
                                             <div className={blockStyle.starRating}>
-                                                {/* Пустые звёзды */}
                                                 <div className={blockStyle.emptyStars}>
                                                     {[...Array(5)].map((_, i) => (
                                                         <FaStar key={i} />
                                                     ))}
                                                 </div>
-                                                {/* Заполненные звёзды */}
                                                 <div
                                                     className={blockStyle.filledStars}
                                                     style={{ width: `${(item.total_rate / 5) * 100}%` }}
@@ -114,7 +112,6 @@ const Main = () => {
                                                 imageSrc={CartImg}
                                                 activeImageSrc={CartImgActive}
                                                 productId={item.pk}
-                                                countItem={1}
                                                 setCartQuantity={setCartQuantity}
                                             />
                                         </div>
@@ -148,13 +145,11 @@ const Main = () => {
                             <h1 className={blockStyle.ProductName}>{item.name}</h1>
                             <div className={blockStyle.RatingContainer}>
                                 <div className={blockStyle.starRating}>
-                                    {/* Пустые звёзды */}
                                     <div className={blockStyle.emptyStars}>
                                         {[...Array(5)].map((_, i) => (
                                             <FaStar key={i} />
                                         ))}
                                     </div>
-                                    {/* Заполненные звёзды */}
                                     <div
                                         className={blockStyle.filledStars}
                                         style={{ width: `${(item.total_rate / 5) * 100}%` }}
@@ -177,7 +172,6 @@ const Main = () => {
                                     imageSrc={CartImg}
                                     activeImageSrc={CartImgActive}
                                     productId={item.pk}
-                                    countItem={1}
                                     setCartQuantity={setCartQuantity}
                                 />
                             </div>

@@ -20,9 +20,9 @@ const api = axios.create({
 const Header = () => {
     const [username, setUsername] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [showRegistration, setShowRegistration] = useState(false); // Состояние для регистрации
+    const [showRegistration, setShowRegistration] = useState(false);
     const menuRef = useRef(null);
-    const { cartQuantity } = useCart();
+    const { cartQuantity, setCartQuantity } = useCart();
     const navigate = useNavigate();
     const token = getToken();
 
@@ -43,14 +43,30 @@ const Header = () => {
         }
     };
 
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     useEffect(() => {
         fetchUserInfo();
     }, [token]);
 
     const handleLogout = async (e) => {
         e.preventDefault();
+
+
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/v1/dj-rest-auth/logout/');
+
+            const csrfToken = getCookie('csrftoken');
+
+            const response = await axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {}, {headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                withCredentials: true});
             if (response.status === 200) {
                 removeToken();
                 setUsername('');
@@ -117,7 +133,7 @@ const Header = () => {
                                 showRegistration ? (
                                     <Registration onClose={close} switchToLogin={() => setShowRegistration(false)} />
                                 ) : (
-                                    <Login onClose={close} fetchUserInfo={fetchUserInfo} switchToRegistration={() => setShowRegistration(true)} />
+                                    <Login onClose={close} fetchUserInfo={fetchUserInfo} switchToRegistration={() => setShowRegistration(true)} setCartQuantity={setCartQuantity} />
                                 )
                             )}
                         </Popup>
