@@ -19,7 +19,7 @@ class ProductSerializerList(serializers.ModelSerializer):
     brand = serializers.StringRelatedField(many=False)
 
     class Meta:
-        fields = ('name', 'slug', 'price_standart', "discount", "price", 'brand', 'category', 'image', 'pk' , 'total_rate')
+        fields = ('name', 'slug', 'price_standart', "discount", "price", 'brand', 'category', 'image', 'pk', 'total_rate')
         model = Product
 
 

@@ -83,7 +83,7 @@ class CartView(APIView):
 
             cart = self.get_or_create_cart(cart_uuid, user)
 
-            response = Response({'message': 'Корзина получена', **CartSerializer(cart).data}, status=200)
+            response = Response({'message': 'Корзина получена', **CartSerializer(cart, context={'request': self.request}).data}, status=200)
 
             week = datetime.datetime.now() + datetime.timedelta(days=7)
             response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(),
