@@ -14,7 +14,7 @@ const CartPage = () => {
     const fetchCart = async () => {
       try {
         const token = getToken();
-         let response;
+        let response;
         if (token) {
             response = await axios.get('http://localhost:8000/api/v1/carts/',
                 {
@@ -69,8 +69,7 @@ const CartPage = () => {
         { quantity: newQuantity },
         { withCredentials: true }
       );
-      // Обновляем данные после изменения количества
-      const response = await axios.get('http://localhost:8000/api/v1/carts/get/', {
+      const response = await axios.get('http://localhost:8000/api/v1/carts/', {
         withCredentials: true
       });
       setCartData(response.data);

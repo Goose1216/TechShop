@@ -10,9 +10,17 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = ('product', 'quantity')
         model = CartItem
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        """
+        ДЛЯ ПРОДАКШЕНА ПОМЕНЯТЬ СТРОКУ НИЖЕ!!!
+        Для Image почему-то пришлось явно указывать полный адрес, иначе фотка пыталась скачать с фронтенда
+        """
+        return representation
+
 
 class CartSerializer(serializers.ModelSerializer):
-    cart_items = CartItemSerializer(read_only=True,many=True)
+    cart_items = CartItemSerializer(read_only=True, many=True)
 
     class Meta:
         fields = ('cart_items',)
