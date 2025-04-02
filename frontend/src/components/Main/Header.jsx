@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 import { getToken, removeToken } from '../../authStorage';
 import axios from 'axios';
 import headerStyles from '../../styles/Main/Header.module.css';
 import AdminImg from '../../img/icon-admin.png';
+import SearchImg from '../../img/icons8-search-30.png'
 import Login from '../Users/Login';
 import Registration from '../Users/Registration';
 import { useCart } from '../../CartContext';
@@ -21,22 +23,25 @@ const Header = () => {
     const [username, setUsername] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showRegistration, setShowRegistration] = useState(false);
+    const [query, setQuery] = useState('');
+    const [suggestions, setSuggestions] = useState([]);
+    const [activeSuggestion, setActiveSuggestion] = useState(-1);
+    const [items, setItems] = useState([]);
     const menuRef = useRef(null);
+    const searchRef = useRef(null);
     const { cartQuantity, setCartQuantity } = useCart();
     const navigate = useNavigate();
     const token = getToken();
 
     const fetchUserInfo = async () => {
         try {
-            const token = getToken();
             if (token) {
                 const response = await api.get('/', {
                     headers: {
                         'Authorization': `Token ${token}`,
                     },
                 });
-                const userData = response.data;
-                setUsername(userData.username);
+                setUsername(response.data.username);
             }
         } catch (error) {
             console.error('Ошибка при получении информации о пользователе:', error);
@@ -45,85 +50,101 @@ const Header = () => {
 
     const fetchCountCartItems = async () => {
         try {
-            let response_cart
-            const token = getToken();
-            if (token) {
-                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
-                    {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Authorization': `Token ${token}`,
-                        },
-                        withCredentials: true
-                    }
-                );
-            } else {
-                response_cart = await axios.get('http://localhost:8000/api/v1/carts/count/',
-                    {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        },
-                        withCredentials: true
-                    }
-                );
-            }
-            setCartQuantity(response_cart.data.count);
+            const config = token ? {
+                headers: { 'Authorization': `Token ${token}` },
+                withCredentials: true
+            } : { withCredentials: true };
+
+            const response = await axios.get('http://localhost:8000/api/v1/carts/count/', config);
+            setCartQuantity(response.data.count);
         } catch (error) {
             console.error('Ошибка при получении информации о корзине:', error);
         }
-    }
+    };
 
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
+    const fetchSuggestions = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/v1/products/category/list');
+            setItems(response.data);
+        } catch (error) {
+            console.error('Ошибка при получении подсказок:', error);
+        }
+    };
 
-    useEffect(() => {
-        fetchUserInfo();
-        fetchCountCartItems();
-    }, [token]);
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (query) {
+            navigate(`/products?q=${encodeURIComponent(query)}`);
+            setQuery('');
+            setSuggestions([]);
+        }
+    };
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setQuery(value);
+
+        if (value) {
+            const filtered = items.filter(item =>
+                item.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setSuggestions(filtered);
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (name) => {
+        setQuery(name);
+        setSuggestions([]);
+        navigate(`/catalog?q=${encodeURIComponent(name)}`);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') handleSearch(e);
+        if (e.key === 'Escape') setSuggestions([]);
+    };
 
     const handleLogout = async (e) => {
         e.preventDefault();
-
-
         try {
-
             const csrfToken = getCookie('csrftoken');
-
-            const response = await axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {}, {headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken,
-                        },
-                withCredentials: true});
-            if (response.status === 200) {
-                removeToken();
-                setUsername('');
-                navigate('/');
-            }
+            await axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {}, {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+                withCredentials: true
+            });
+            removeToken();
+            setUsername('');
+            navigate('/');
         } catch (error) {
             console.error('Ошибка при выходе из системы:', error);
         }
     };
 
-    const handleMouseEnter = () => {
-        setIsMenuOpen(true);
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
     };
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
+        fetchUserInfo();
+        fetchCountCartItems();
+        fetchSuggestions();
+    }, [token]);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target) &&
+                (!searchRef.current || !searchRef.current.contains(e.target))) {
                 setIsMenuOpen(false);
+                setSuggestions([]);
             }
         };
-        document.addEventListener('click', handleClickOutside);
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     return (
@@ -135,8 +156,37 @@ const Header = () => {
                     </Link>
                     <Link to="/about" className={headerStyles.otherPoint}>О нас</Link>
                 </nav>
+
                 <nav className={headerStyles.other}>
                     <Link to="/products" className={headerStyles.productsText}>Товары</Link>
+                    <div className={headerStyles.searchContainer} ref={searchRef}>
+                        <form onSubmit={handleSearch} className={headerStyles.searchForm}>
+                            <input
+                                type="text"
+                                placeholder="Поиск товаров..."
+                                value={query}
+                                onChange={handleChange}
+                                onKeyDown={handleKeyDown}
+                                className={headerStyles.searchInput}
+                            />
+                            <button type="submit" className={headerStyles.searchButton}>
+                                <img src={SearchImg} alt="search" />
+                            </button>
+                        </form>
+                        {suggestions.length > 0 && (
+                            <ul className={headerStyles.suggestionsList}>
+                                {suggestions.map((item, index) => (
+                                    <li
+                                        key={index}
+                                        className={index === activeSuggestion ? headerStyles.activeSuggestion : ''}
+                                        onClick={() => handleSuggestionClick(item.name)}
+                                    >
+                                        {item.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
                 </nav>
 
                 <nav className={headerStyles.componRight}>
@@ -148,9 +198,31 @@ const Header = () => {
                     </Link>
                     <div className={headerStyles.verticalLine}></div>
                     {username ? (
-                        <span className={headerStyles.menuItem} onClick={handleMouseEnter} ref={menuRef}>
-                            {username}
-                        </span>
+                        <div className={headerStyles.userMenu} ref={menuRef}>
+                            <span
+                                className={headerStyles.menuItem}
+                                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            >
+                                {username}
+                            </span>
+                            {isMenuOpen && (
+                                <div className={headerStyles.dropdownMenu}>
+                                    <Link
+                                        to="/profile"
+                                        className={headerStyles.dropdownItem}
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <i className="fas fa-user"></i> Личный кабинет
+                                    </Link>
+                                    <button
+                                        className={headerStyles.dropdownItem}
+                                        onClick={handleLogout}
+                                    >
+                                        <i className="fas fa-sign-out-alt"></i> Выйти
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <Popup
                             trigger={
@@ -166,24 +238,18 @@ const Header = () => {
                                 showRegistration ? (
                                     <Registration onClose={close} switchToLogin={() => setShowRegistration(false)} />
                                 ) : (
-                                    <Login onClose={close} fetchUserInfo={fetchUserInfo} switchToRegistration={() => setShowRegistration(true)} setCartQuantity={setCartQuantity} />
+                                    <Login
+                                        onClose={close}
+                                        fetchUserInfo={fetchUserInfo}
+                                        switchToRegistration={() => setShowRegistration(true)}
+                                        setCartQuantity={setCartQuantity}
+                                    />
                                 )
                             )}
                         </Popup>
                     )}
                 </nav>
             </div>
-
-            {isMenuOpen && (
-                <div className={headerStyles.dropdownMenu}>
-                    <Link to="/profile" className={headerStyles.dropdownItem}>
-                        Личный кабинет
-                    </Link>
-                    <button className={headerStyles.dropdownItem} onClick={handleLogout}>
-                        Выйти
-                    </button>
-                </div>
-            )}
         </header>
     );
 };

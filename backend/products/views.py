@@ -15,10 +15,11 @@ class ProductList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Product.objects.all()
+        print(self.request.query_params)
 
         query = self.request.query_params.get("q")
         if query:
-            queryset = self.search_products(query)
+            queryset = self.search_products(queryset, query)
 
         brand = self.request.query_params.get("brand")
         if brand:
@@ -36,8 +37,17 @@ class ProductList(generics.ListAPIView):
         return queryset
 
     @staticmethod
-    def search_products(query):
-        return query
+    def search_products(queryset, query):
+        # Несмотря на icontains запрос регистрочувствительный
+        query_list = query.split(' ')
+        for query in query_list:
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(brand__name__icontains=query) |
+                Q(category__name__icontains=query)
+            ).distinct()
+        print(queryset, query)
+        return queryset
 
     @staticmethod
     def filter_by_brand(queryset, brand):

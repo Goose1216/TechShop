@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import SalePict from '../../img/SalePict.png';
 import CartImg from '../../img/orange-cart.png';
 import CartImgActive from '../../img/green-cart.png';
@@ -20,6 +20,7 @@ const AllProductsPage = () => {
     const [selectedBrands, setSelectedBrands] = useState([]);
     const [sortOption, setSortOption] = useState('-price');
     const { setCartQuantity } = useCart();
+    const location = useLocation();
 
      function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -31,12 +32,16 @@ const AllProductsPage = () => {
         fetchProducts();
     }, [currentPage, sortOption, selectedBrands, minPrice, maxPrice]);
 
-    const fetchProducts = () => {
+   const fetchProducts = () => {
+        const urlParams = new URLSearchParams(window.location.search); //
+        const searchQuery = urlParams.get('q') || ''; //
+
         const params = new URLSearchParams({
             page: currentPage,
             sort: sortOption,
             price: `${minPrice}-${maxPrice}`,
             brand: selectedBrands.join('-'),
+            q: searchQuery, //
         });
 
         const csrfToken = getCookie('csrftoken');
