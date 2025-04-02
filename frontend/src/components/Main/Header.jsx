@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { getToken, removeToken } from '../../authStorage';
 import axios from 'axios';
@@ -31,6 +31,7 @@ const Header = () => {
     const searchRef = useRef(null);
     const { cartQuantity, setCartQuantity } = useCart();
     const navigate = useNavigate();
+    const location = useLocation();
     const token = getToken();
 
     const fetchUserInfo = async () => {
@@ -97,12 +98,23 @@ const Header = () => {
     const handleSuggestionClick = (name) => {
         setQuery(name);
         setSuggestions([]);
-        navigate(`/catalog?q=${encodeURIComponent(name)}`);
+        navigate(`/products?q=${encodeURIComponent(name)}`);
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') handleSearch(e);
-        if (e.key === 'Escape') setSuggestions([]);
+        if (e.key === 'Enter') {
+            if (activeSuggestion >= 0) {
+                handleSuggestionClick(suggestions[activeSuggestion].name);
+            } else {
+                handleSearch(e);
+            }
+        } else if (e.key === 'ArrowDown') {
+            setActiveSuggestion((prev) => (prev + 1) % suggestions.length);
+        } else if (e.key === 'ArrowUp') {
+            setActiveSuggestion((prev) => (prev === 0 ? suggestions.length - 1 : prev - 1));
+        } else if (e.key === 'Escape') {
+            setSuggestions([]);
+        }
     };
 
     const handleLogout = async (e) => {
@@ -146,6 +158,11 @@ const Header = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        setQuery('');
+        setSuggestions([]);
+    }, [location]);
 
     return (
         <header className={headerStyles.header}>

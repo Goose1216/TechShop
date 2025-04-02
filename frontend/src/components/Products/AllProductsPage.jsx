@@ -30,7 +30,7 @@ const AllProductsPage = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [currentPage, sortOption, selectedBrands, minPrice, maxPrice]);
+    }, [window.location.search, currentPage, sortOption, selectedBrands, minPrice, maxPrice]);
 
    const fetchProducts = () => {
         const urlParams = new URLSearchParams(window.location.search); //
@@ -51,6 +51,7 @@ const AllProductsPage = () => {
                 setProducts(response.data.results);
                 setTotalPages(response.data.count_pages);
                 setBrands(response.data.brands);
+                setMaxPrice(response.data.max_price)
             })
             .catch(error => console.error('Ошибка загрузки данных:', error));
     };

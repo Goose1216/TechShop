@@ -15,7 +15,6 @@ class ProductList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Product.objects.all()
-        print(self.request.query_params)
 
         query = self.request.query_params.get("q")
         if query:
@@ -46,7 +45,6 @@ class ProductList(generics.ListAPIView):
                 Q(brand__name__icontains=query) |
                 Q(category__name__icontains=query)
             ).distinct()
-        print(queryset, query)
         return queryset
 
     @staticmethod
