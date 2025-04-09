@@ -8,6 +8,7 @@ import AddToCartButton from '../../AddToCartButton.js';
 import { useCart } from '../../CartContext';
 import allProductsStyles from '../../styles/Products/AllProductsPage.module.css';
 import blockStyle from '../../styles/BlockStyle.module.css';
+import 'font-awesome/css/font-awesome.min.css';
 import { FaStar } from 'react-icons/fa';
 
 const AllProductsPage = () => {
@@ -234,7 +235,6 @@ const AllProductsPage = () => {
                 ))}
             </div>
 
-            {/* Пагинация */}
             <div className={allProductsStyles.pagination}>
                 <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>
                     &lt;&lt;

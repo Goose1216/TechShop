@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+/* Общий контейнер */
+.DetailContainer {
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Заголовок товара */
+.productName {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* Контейнер для деталей товара */
+.productDetailContainer {
+    display: flex;
+    gap: 30px;
+}
+
+/* Изображение товара */
+.productImage {
+    width: 40%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Информация о товаре */
+.productInfo {
+    width: 60%;
+}
+
+.productBrand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.productCategories h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.productCategories ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.productCategories li {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.productPrice {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff5722;
+}
+
+.discountPrice {
+    text-decoration: line-through;
+    color: #888888;
+    margin-left: 10px;
+}
+
+.addToCartContainer img{
+    margin-top: 20px;
+    width: 100px;
+    height: 70px;
+}
+
+.AddToCartButtonCatalog {
+    background-color: #ff5722;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.AddToCartButtonCatalog:hover {
+    background-color: #e64a19;
+}
+
+/* Reviews Section Styles */
+.reviewsSection {
+    margin-top: 30px;
+}
+
+.reviewCard {
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 10px;
+    margin-right: 150px;
+    font-size: 17px;
+}
+
+.reviewHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewAuthor {
+    color: darkorange;
+    margin-bottom: 5px;
+    margin-right: 10px;
+}
+
+.star_rating {
+    font-size: 20px;
+}
+
+.star_rating__wrap {
+    display: inline-block;
+}
+
+.star_rating__wrap:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.star_rating__ico {
+    float: right;
+    padding-left: 2px;
+    cursor: pointer;
+    color: #FFB300;
+}
+
+.star_rating__ico:last-child {
+    padding-left: 0;
+}
+
+.star_rating__input {
+    display: none;
+}
+
+.star_rating__ico:hover:before,
+.star_rating__ico:hover ~ .star_rating__ico:before,
+.star_rating__input:checked ~ .star_rating__ico:before {
+    content: "\f005";
+}
+
+.review {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.reviewForm {
+    margin-top: 20px;
+    margin-right: 150px;
+}
+
+.reviewInput {
+    width: 100%;
+    height: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 20px;
+}
+
+.submitButton {
+    font-size: 20px;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #146340;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submitButton:hover {
+    background-color: #0eab67;
+}
