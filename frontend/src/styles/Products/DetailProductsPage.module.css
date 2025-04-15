@@ -1,12 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-/* Общий контейнер */
 .DetailContainer {
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Заголовок товара */
 .productName {
     font-size: 3rem;
     font-weight: bold;
@@ -15,21 +13,18 @@
     margin-bottom: 30px;
 }
 
-/* Контейнер для деталей товара */
 .productDetailContainer {
     display: flex;
     gap: 30px;
 }
 
-/* Изображение товара */
 .productImage {
-    width: 40%;
+    width: 30%;
     height: auto;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Информация о товаре */
 .productInfo {
     width: 60%;
 }
@@ -86,7 +81,6 @@
     background-color: #e64a19;
 }
 
-/* Reviews Section Styles */
 .reviewsSection {
     margin-top: 30px;
 }

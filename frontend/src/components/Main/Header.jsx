@@ -225,7 +225,7 @@ const Header = () => {
                             {isMenuOpen && (
                                 <div className={headerStyles.dropdownMenu}>
                                     <Link
-                                        to="/profile"
+                                        to="/user"
                                         className={headerStyles.dropdownItem}
                                         onClick={() => setIsMenuOpen(false)}
                                     >

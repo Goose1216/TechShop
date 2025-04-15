@@ -40,6 +40,7 @@ const Login = ({ onClose, fetchUserInfo, switchToRegistration, setCartQuantity})
             setToken(token);
             fetchUserInfo();
             onClose();
+            window.location.reload();
 
             let response_cart
             if (token) {
