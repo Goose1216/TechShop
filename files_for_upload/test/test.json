@@ -1,0 +1,10 @@
+[
+  {
+    "name": "Product 1",
+    "price": 1000,
+    "discount": 10,
+    "brand": "POCO",
+    "categories": ["Новинка"],
+    "image": "product1.jpg"
+  }
+]

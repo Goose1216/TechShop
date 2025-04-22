@@ -7,6 +7,13 @@ from .serializers import ProductSerializerList, ProductSerializerDetail, ReviewS
 #from drf_spectacular.utils import extend_schema
 from django.db.models import F, Func, Q
 from django.contrib.auth.models import AnonymousUser
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.db import transaction
+from .serializers import ProductImportSerializer
+from .models import Product
+from django.core.files import File
 
 
 #@extend_schema(summary="Отображает список всех товаров")
@@ -123,3 +130,69 @@ class CategoryList(generics.ListAPIView):
     serializer_class = CategorySerializer
     pagination_class = None
     queryset = Category.objects.all()
+
+
+class ProductImportAPIView(APIView):
+    def post(self, request, format=None):
+        serializer = ProductImportSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            products_data = serializer.process_file(
+                serializer.validated_data['data_file'],
+                serializer.validated_data['images_dir']
+            )
+
+            results = self.import_products(products_data, serializer.validated_data['images_dir'])
+
+            return Response({
+                'status': 'success',
+                'created': results['created'],
+                'updated': results['updated'],
+                'total': len(products_data)
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+    def import_products(self, products_data, images_dir):
+        created = 0
+        updated = 0
+
+        for product_data in products_data:
+            image_path = product_data.pop('image_path', '')
+            categories = product_data.pop('categories', [])
+            brand = product_data.pop('brand', None)
+
+            product, is_created = Product.objects.update_or_create(
+                name=product_data['name'],
+                defaults=product_data
+            )
+
+            if brand:
+                product.brand = brand
+                product.save()
+
+            if categories:
+                product.category.set(categories)
+
+            if image_path:
+                image_full_path = images_dir / image_path
+                if image_full_path.exists():
+                    with open(image_full_path, 'rb') as img_file:
+                        product.image.save(
+                            image_path,
+                            File(img_file),
+                            save=True
+                        )
+
+            if is_created:
+                created += 1
+            else:
+                updated += 1
+
+        return {'created': created, 'updated': updated}
