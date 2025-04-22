@@ -73,7 +73,7 @@ class Product(models.Model):
             total_rate = reviews.aggregate(models.Avg('rate'))
         else:
             total_rate = {'rate__avg': 0}
-        self.total_rate = total_rate['rate__avg']
+        self.total_rate = round(total_rate['rate__avg'], 2)
         super().save(*args, **kwargs)
 
 
