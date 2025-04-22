@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../../styles/Users/UserProfile.module.css';
 import { getToken, removeToken } from '../../authStorage';
 import axios from 'axios';
+import PasswordChangeModal from './PasswordChangeModal'
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
@@ -20,6 +21,7 @@ const UserProfile = () => {
         last_name: '',
         general: ''
     });
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
 
     const token = getToken();
 
@@ -128,8 +130,7 @@ const UserProfile = () => {
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    const handleLogout = async (e) => {
-        e.preventDefault();
+    const handleLogout = async () => {
         try {
             const csrfToken = getCookie('csrftoken');
             await axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {}, {
@@ -149,8 +150,13 @@ const UserProfile = () => {
         }
     };
 
+
     const handleChangePassword = () => {
-        window.location.href = '/change-password';
+        setShowPasswordModal(true);
+    };
+
+    const handleClosePasswordModal = () => {
+        setShowPasswordModal(false);
     };
 
     if (loading) {
@@ -163,6 +169,14 @@ const UserProfile = () => {
 
     return (
         <div className={styles.container}>
+
+            {showPasswordModal && (
+                <PasswordChangeModal
+                    onClose={handleClosePasswordModal}
+                    onLogout={handleLogout}
+                />
+            )}
+
             <div className={styles.profileHeader}>
                 <h1>Личный кабинет</h1>
                 <p className={styles.welcomeMessage}>Добро пожаловать, {user?.username}!</p>

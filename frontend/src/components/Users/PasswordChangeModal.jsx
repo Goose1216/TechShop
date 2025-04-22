@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { getToken, removeToken } from '../../authStorage';
+import React, { useState } from 'react';
+import { getToken } from '../../authStorage';
 import axios from 'axios';
 import styles from '../../styles/Users/PasswordChange.module.css';
 import blockStyle from '../../styles/BlockStyle.module.css';
 
-const PasswordChangeWindow = () => {
+const PasswordChangeModal = ({ onClose, onLogout }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword1, setNewPassword1] = useState('');
   const [newPassword2, setNewPassword2] = useState('');
@@ -49,46 +49,44 @@ const PasswordChangeWindow = () => {
             'Content-Type': 'application/json',
           },
         });
+
       alert('Пароль успешно обновлён, перезайдите в учетную запись, пожалуйста');
-      handleLogout();
+      onLogout();
+      onClose();
     }
     catch (error) {
-    if (error.response && error.response.data) {
-      let errorMessage = 'Произошла ошибка при обновлении данных.';
-      if (error.response.data.old_password) {
-        errorMessage = error.response.data.old_password;
-        setError(errorMessage);
+      if (error.response && error.response.data) {
+        let errorMessage = 'Произошла ошибка при обновлении данных.';
+        if (error.response.data.old_password) {
+          errorMessage = error.response.data.old_password;
+          setError(errorMessage);
+        }
+        if (error.response.data.new_password1) {
+          errorMessage = error.response.data.new_password1;
+          setError(errorMessage);
+        }
+        if (error.response.data.new_password2) {
+          errorMessage = error.response.data.new_password2;
+          setError(errorMessage);
+        }
+      } else {
       }
-      if (error.response.data.new_password1) {
-        errorMessage = error.response.data.new_password1;
-        setError(errorMessage);
-      }
-      if (error.response.data.new_password2) {
-        errorMessage = error.response.data.new_password2;
-        setError(errorMessage);
-      }
-      alert(errorMessage);
-    } else {
-      alert('Возникла непредвиденная ошибка при попытке обновления');
-    }
-    console.error('Ошибка при обновлении данных:', error);
-  } finally {
+      console.error('Ошибка при обновлении данных:', error);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    removeToken();
-    window.location.href = '/';
-  };
-
   return (
-    <div className={styles.Body}>
-      <div>
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <button className={styles.closeButton} onClick={onClose}>×</button>
+
+        <h1>Смена пароля</h1>
         {error && <div className={styles.errorMessage}>{error}</div>}
-        <div className={styles.Window}>
-          <h1>Смена пароля</h1>
-          <form className={styles.PasswordForm} onSubmit={handleSave}>
+
+        <form className={styles.PasswordForm} onSubmit={handleSave}>
+          <div className={styles.formGroup}>
             <label htmlFor="oldPassword" className={styles.Label}>Старый пароль</label>
             <input
               type='password'
@@ -97,8 +95,11 @@ const PasswordChangeWindow = () => {
               onChange={handleInputChange}
               value={oldPassword}
               required
+              className={styles.inputField}
             />
+          </div>
 
+          <div className={styles.formGroup}>
             <label htmlFor="newPassword1" className={styles.Label}>Новый пароль</label>
             <input
               type='password'
@@ -107,7 +108,11 @@ const PasswordChangeWindow = () => {
               autoComplete="off"
               value={newPassword1}
               required
+              className={styles.inputField}
             />
+          </div>
+
+          <div className={styles.formGroup}>
             <label htmlFor="newPassword2" className={styles.Label}>Повторите новый пароль</label>
             <input
               type='password'
@@ -116,17 +121,26 @@ const PasswordChangeWindow = () => {
               autoComplete="off"
               value={newPassword2}
               required
+              className={styles.inputField}
             />
-            <div className={styles.buttonContainer}>
-              <button className={styles.SaveButton} type="submit" disabled={loading}>
-                {loading ? <span className={blockStyle.spinner}></span> : 'Сменить пароль'}
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+
+          <div className={styles.buttonContainer}>
+            <button className={styles.SaveButton} type="submit" disabled={loading}>
+              {loading ? <span className={blockStyle.spinner}></span> : 'Сменить пароль'}
+            </button>
+            <button
+              type="button"
+              className={styles.CancelButton}
+              onClick={onClose}
+            >
+              Отмена
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 };
 
-export default PasswordChangeWindow;
+export default PasswordChangeModal;

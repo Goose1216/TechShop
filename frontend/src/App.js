@@ -10,7 +10,6 @@ import GoogleAuth from './components/Users/GoogleAuth';
 import YandexAuth from './components/Users/YandexAuth';
 import UserProfile from './components/Users/UserProfile';
 import CartPage from './components/Cart/CartPage'
-import ChangePassword from './components/Users/PasswordChange'
 import { CartProvider } from './CartContext';
 
 const App = () => {
@@ -27,7 +26,6 @@ const App = () => {
                     <Route path="/login/google" element={<GoogleAuth />} />
                     <Route path="/login/yandex" element={<YandexAuth />} />
                     <Route path="/user" element={<UserProfile />} />
-                    <Route path="/change-password" element={<ChangePassword />} />
                     <Route path="/:slug" element={<ProductDetail />} />
                 </Routes>
                 <Footer />

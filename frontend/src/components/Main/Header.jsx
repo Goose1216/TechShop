@@ -5,6 +5,7 @@ import { getToken, removeToken } from '../../authStorage';
 import axios from 'axios';
 import headerStyles from '../../styles/Main/Header.module.css';
 import AdminImg from '../../img/icon-admin.png';
+import AdminImgBlack from '../../img/icon-admin-black2.png';
 import SearchImg from '../../img/icons8-search-30.png'
 import Login from '../Users/Login';
 import Registration from '../Users/Registration';
@@ -229,7 +230,7 @@ const Header = () => {
                                         className={headerStyles.dropdownItem}
                                         onClick={() => setIsMenuOpen(false)}
                                     >
-                                        <i className="fas fa-user"></i> Личный кабинет
+                                       <img src={AdminImgBlack} alt="admin" /> Личный кабинет
                                     </Link>
                                     <button
                                         className={headerStyles.dropdownItem}
