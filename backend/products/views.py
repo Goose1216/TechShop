@@ -99,7 +99,7 @@ class ProductMain(generics.ListAPIView):
     serializer_class = ProductSerializerList
 
     def get_queryset(self):
-        queryset = Product.objects.filter(Q(category__name='Новинка') | Q(category__name='Выгодно'))
+        queryset = Product.objects.filter(Q(category__name='Новинка') | Q(category__name='Выгодно')).order_by("-total_rate", "-discount")
         return queryset
 
 
