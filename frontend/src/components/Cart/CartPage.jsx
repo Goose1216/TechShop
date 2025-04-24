@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback  } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CartPage.css';
@@ -14,6 +14,7 @@ const CartPage = () => {
   const [editingQuantity, setEditingQuantity] = useState(null);
   const [tempQuantity, setTempQuantity] = useState('');
   const { setCartQuantity } = useCart();
+  const [updateTimeout, setUpdateTimeout] = useState(null);
 
    function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -87,37 +88,58 @@ const CartPage = () => {
     }
 };
 
-  const handleUpdateQuantity = async (productId, newQuantity) => {
-    if (newQuantity < 1) return;
-    try {
-    const csrfToken = getCookie('csrftoken');
-      await axios.put(
-        `http://localhost:8000/api/v1/carts/update/${productId}/`,
-        { quantity: newQuantity },
-        { headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
-                    },
-                     withCredentials: true }
-      );
-      const response = await axios.get('http://localhost:8000/api/v1/carts/', {
-      headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken,
-                    },
-        withCredentials: true
-      });
-
-       if (response.status == 200) {
-       fetchCart();
-      }
-
-    } catch (err) {
-      setError('Не удалось изменить количество');
+    const debouncedUpdateQuantity = useCallback((productId, newQuantity) => {
+    if (updateTimeout) {
+      clearTimeout(updateTimeout);
     }
-  };
+
+    const timeout = setTimeout(async () => {
+      try {
+        const csrfToken = getCookie('csrftoken');
+        await axios.put(
+          `http://localhost:8000/api/v1/carts/update/${productId}/`,
+          { quantity: newQuantity },
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+            },
+            withCredentials: true
+          }
+        );
+        fetchCart();
+      } catch (err) {
+        setError('Не удалось изменить количество');
+      }
+    }, 500);
+
+    setUpdateTimeout(timeout);
+  }, [updateTimeout, fetchCart]);
+
+ const handleUpdateQuantity = (productId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    setCartData(prev => ({
+      ...prev,
+      cart_items: prev.cart_items.map(item =>
+        item.product.pk === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    }));
+
+        debouncedUpdateQuantity(productId, newQuantity);
+      };
+
+      useEffect(() => {
+        return () => {
+          if (updateTimeout) {
+            clearTimeout(updateTimeout);
+          }
+        };
+      }, [updateTimeout]);
+
 
   if (isLoading) {
     return (
