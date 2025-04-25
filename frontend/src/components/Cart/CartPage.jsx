@@ -170,10 +170,6 @@ const CartPage = () => {
     );
   }
 
-  const totalPrice = cartData.cart_items.reduce(
-    (sum, item) => sum + (item.product.price * item.quantity),
-    0
-  );
 
   const startEditing = (productId, currentQuantity) => {
     setEditingQuantity(productId);
@@ -283,7 +279,7 @@ const CartPage = () => {
                   </span>
                 )}
                 <span className="item-total">
-                  {(item.product.price * item.quantity).toLocaleString()} ₽
+                  {(item.total_price).toLocaleString()} ₽
                 </span>
               </div>
             </div>
@@ -294,7 +290,7 @@ const CartPage = () => {
           <h3>Итоговая сумма</h3>
           <div className="summary-row">
             <span>Товары ({cartData.cart_items.length})</span>
-            <span>{totalPrice.toLocaleString()} ₽</span>
+            <span>{cartData.total_price.toLocaleString()} ₽</span>
           </div>
           <div className="summary-row">
             <span>Доставка</span>
@@ -302,7 +298,7 @@ const CartPage = () => {
           </div>
           <div className="summary-total">
             <span>Итого</span>
-            <span>{totalPrice.toLocaleString()} ₽</span>
+            <span>{cartData.total_price.toLocaleString()} ₽</span>
           </div>
           <button
             className="checkout-button"

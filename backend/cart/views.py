@@ -101,8 +101,8 @@ def get_or_create_cart(cart_uuid, user):
 
         return cart
 
-    except Cart.DoesNotExist:
-        raise NotFound("Корзина не найдена")
+    except Exception as error:
+        raise error
 
 
 class CartItemList(APIView):
