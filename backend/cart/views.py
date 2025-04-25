@@ -78,7 +78,7 @@ class CartCount(APIView):
             return Response({"message": "Ошибка запроса"}, status=400)
 
 
-def get_or_create_cart(cart_uuid, user):
+def get_or_create_cart(cart_uuid=None, user=None):
     try:
         if isinstance(user, AnonymousUser):
             user = None

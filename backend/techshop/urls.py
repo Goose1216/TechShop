@@ -8,6 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/products/', include('products.urls')),
     path('api/v1/carts/', include('cart.urls')),
+    path('api/v1/orders/', include('orders.urls')),
     path('api/v1/dj-rest-auth/', include('users.urls')),
     path('api-auth/', include('rest_framework.urls'), name="api_auth"),
     path('api/v1/dj-rest-auth/', include('dj_rest_auth.urls')),

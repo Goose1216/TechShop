@@ -208,6 +208,18 @@ const Header = () => {
                 </nav>
 
                 <nav className={headerStyles.componRight}>
+                    <div className={headerStyles.userMenu} ref={menuRef}>
+                        {username ? (
+                        <div>
+                            <Link to="/orders" className={headerStyles.menuItem}>
+                                Заказы
+                            </Link>
+                        </div>
+                        ) : (<div></div>)}
+                    </div>
+                    {username ? (
+                    <div className={headerStyles.verticalLine}></div>
+                    ) : (<div></div>)}
                     <Link to="/cart" className={headerStyles.menuItem}>
                         Корзина
                         {cartQuantity > 0 && (

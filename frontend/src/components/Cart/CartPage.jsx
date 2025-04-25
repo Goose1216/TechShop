@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback  } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CartPage.css';
+import styles from '../../styles/BlockStyle.module.css'
 import { getToken } from '../../authStorage';
 import { useCart } from '../../CartContext';
 
@@ -15,6 +16,8 @@ const CartPage = () => {
   const [tempQuantity, setTempQuantity] = useState('');
   const { setCartQuantity } = useCart();
   const [updateTimeout, setUpdateTimeout] = useState(null);
+  const token = getToken();
+
 
    function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -24,7 +27,6 @@ const CartPage = () => {
 
   const fetchCart = async () => {
       try {
-        const token = getToken();
         let response;
         const csrfToken = getCookie('csrftoken');
         if (token) {
@@ -300,12 +302,22 @@ const CartPage = () => {
             <span>Итого</span>
             <span>{cartData.total_price.toLocaleString()} ₽</span>
           </div>
+          {token ? (
           <button
             className="checkout-button"
-            onClick={() => navigate('/checkout')}
+            onClick={() => navigate('/create_order')}
           >
             Оформить заказ
           </button>
+        ) : (
+          <button
+            className="checkout-button disabled"
+            disabled
+            title="Для оформления заказа необходимо авторизоваться"
+          >
+            Оформить заказ
+          </button>
+        )}
           <Link to="/products" className="continue-shopping">
             Продолжить покупки
           </Link>
@@ -351,15 +363,15 @@ const CartPage = () => {
       </button>
     </div>
  {showSuccessModal && (
-        <div className="success-modal-overlay">
-          <div className="success-modal">
+        <div className={styles.successModalOverlay}>
+          <div className={styles.successModal}>
             <h3>Корзина успешно обновлена!</h3>
             <button
               onClick={() => {
               setShowSuccessModal(false);
               fetchCart();
               }}
-              className="success-modal-close"
+              className={styles.successModalClose}
             >
               Закрыть
             </button>
