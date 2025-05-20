@@ -2,11 +2,11 @@ from dj_rest_auth.views import APIView
 from rest_framework.views import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
 from django.contrib.auth.models import AnonymousUser
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from .models import Cart, CartItem
 from products.models import Product
-from .serializers import CartSerializer
+from .serializers import CartSerializer, PkSerializer, DummySerializer
 
 import json
 from uuid import UUID
@@ -111,7 +111,9 @@ def get_or_create_cart(cart_uuid=None, user=None):
     except Exception as error:
         raise error
 
-@extend_schema(tags=['Carts'], summary="Список товаров в корзине")
+@extend_schema(
+    tags=['Carts'],
+    summary="Список товаров в корзине")
 class CartItemList(APIView):
     serializer_class = None
     def get(self, request):
@@ -139,7 +141,15 @@ class CartItemList(APIView):
         except Exception as e:
             return Response({"message": "Ошибка запроса"}, status=400)
 
-@extend_schema(tags=['Carts'], summary="Добавление товаров в корзину")
+@extend_schema(
+    tags=['Carts'],
+    summary="Добавление товаров в корзину",
+    request=PkSerializer,
+    responses={
+        204: DummySerializer,
+        200: DummySerializer,
+    },
+)
 class CartItemAdd(APIView):
     serializer_class = None
     def post(self, request):

@@ -32,3 +32,13 @@ class CartSerializer(serializers.ModelSerializer):
             total_price += item['total_price']
         representation['total_price'] = total_price
         return representation
+
+class PkSerializer(serializers.Serializer):
+    product = serializers.IntegerField()
+
+class DummySerializer(serializers.Serializer):
+    message = serializers.Field()
+
+class DummyWithCountSerializer(serializers.Serializer):
+    message = serializers.Field()
+    count = serializers.IntegerField()
