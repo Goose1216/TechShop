@@ -1,21 +1,22 @@
 import json
 import datetime
 
-
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from drf_spectacular.utils import extend_schema
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.decorators import permission_classes, api_view
-#from drf_spectacular.utils import extend_schema
 from django.db import transaction
 from rest_framework.response import Response
 from .serializers import OrderListSerializer, OrderDetailSerializer
 from rest_framework.permissions import IsAuthenticated
+
+
 from .models import Order, OrderItem
 from cart.models import Cart, CartItem
 from cart.views import get_or_create_cart
 from products.models import Product
 
 
-#@extend_schema(summary="Конечная точка создания заказов")
+@extend_schema(tags=['Orders'], summary="Создание Заказа")
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_order_view(request):
@@ -73,7 +74,8 @@ def create_order(request, cart_id):
         print(e)
         return False
 
-#@extend_schema(summary="Конечная точка показа списка заказов")
+
+@extend_schema(tags=['Orders'], summary="Конечная точка показа списка заказов")
 class OrderList(ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = None
@@ -86,7 +88,7 @@ class OrderList(ListAPIView):
         return queryset
 
 
-#@extend_schema(summary="Конечная точка показа деталей заказа")
+@extend_schema(tags=['Orders'], summary="Конечная точка показа деталей заказа")
 class OrderDetail(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = None

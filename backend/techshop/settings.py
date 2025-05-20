@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.yandex",
+    'drf_spectacular',
 
     #locals
     'products.apps.ProductsConfig',
@@ -205,5 +206,16 @@ ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
+
+# Swagger
+SPECTACULAR_SETTINGS = {
+    "TITLE": "TechoShop API",
+    "VERSION": "0.0.1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True, #
+    },
+    "COMPONENT_SPLIT_REQUEST": True
+}
 
 

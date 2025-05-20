@@ -4,19 +4,24 @@ import datetime
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.yandex.views import YandexAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-
 from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import LoginView, LogoutView
+from drf_spectacular.utils import extend_schema
+from dj_rest_auth.views import (
+    PasswordChangeView, PasswordResetConfirmView,
+    PasswordResetView, UserDetailsView,
+)
+from dj_rest_auth.registration.views import RegisterView, VerifyEmailView, ResendEmailVerificationView
 
 from cart.models import Cart, CartItem
 
-
+@extend_schema(tags=['Users'], summary="Авторизация пользователей через Google")
 class GoogleLoginView(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     callback_url = 'http://localhost:3000/login/google'
     client_class = OAuth2Client
 
-
+@extend_schema(tags=['Users'], summary="Авторизация пользователей через Yandex")
 class YandexLoginView(SocialLoginView):
     adapter_class = YandexAuth2Adapter
     callback_url = 'http://localhost:3000/login/yandex'
@@ -50,6 +55,11 @@ class YandexLoginView(SocialLoginView):
 
 
 def sync_carts_logged_out(user_cart):
+    """
+    Синхронизация корзины при выходе из аккаунта
+    :param user_cart:
+    :return:
+    """
     new_cart = Cart.objects.create()
 
     for item in user_cart.cart_items.all():
@@ -63,6 +73,12 @@ def sync_carts_logged_out(user_cart):
 
 
 def sync_carts_logged_in(anonymous_cart, user):
+    """
+    Синхронизация корзины при авторизации
+    :param anonymous_cart:
+    :param user:
+    :return:
+    """
     user_cart, created = Cart.objects.get_or_create(user=user)
     if (user_cart != anonymous_cart):
         for item in anonymous_cart.cart_items.all():
@@ -81,6 +97,7 @@ def sync_carts_logged_in(anonymous_cart, user):
     return user_cart.id
 
 
+@extend_schema(tags=['Users'], summary="Авторизация")
 class CustomLoginView(LoginView):
     def post(self, request, *args, **kwargs):
         cart_uuid = self.request.COOKIES.get('cart')
@@ -109,7 +126,9 @@ class CustomLoginView(LoginView):
         return response
 
 
+@extend_schema(tags=['Users'], summary="Выход из аккаунта")
 class CustomLogoutView(LogoutView):
+    serializer_class = None
     def post(self, request, *args, **kwargs):
         cart_uuid = self.request.COOKIES.get('cart')
 
@@ -126,3 +145,31 @@ class CustomLogoutView(LogoutView):
                 pass
 
         return response
+
+@extend_schema(tags=['Users'], summary='Получение и обновление информации о пользователе')
+class UserDetailsView(UserDetailsView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Изменение пароля')
+class PasswordChangeView(PasswordChangeView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Подтверждение о изменении пароля')
+class PasswordResetConfirmView(PasswordResetConfirmView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Сброс пароля')
+class PasswordResetView(PasswordResetView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Регистрация')
+class RegisterView(RegisterView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Подтверждение почты')
+class VerifyEmailView(VerifyEmailView):
+    pass
+
+@extend_schema(tags=['Users'], summary='Повторная отправка подтверждения почты')
+class ResendEmailVerificationView(ResendEmailVerificationView):
+    pass

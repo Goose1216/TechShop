@@ -24,7 +24,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         fields = ("uuid", 'status', 'total_price', 'created_at')
         model = Order
 
-    def get_status(self, obj):
+    def get_status(self, obj) -> str:
         return dict(statuses).get(obj.status)
 
 
@@ -36,5 +36,5 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         fields = "__all__"
         model = Order
 
-    def get_status(self, obj):
+    def get_status(self, obj)-> str:
         return dict(statuses).get(obj.status)

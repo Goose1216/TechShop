@@ -4,7 +4,7 @@ from rest_framework.validators import ValidationError
 
 from .models import Product, Review, Category
 from .serializers import ProductSerializerList, ProductSerializerDetail, ReviewSerializerCreate, ReviewSerializerList, CategorySerializer
-#from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema
 from django.db.models import F, Func, Q
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.views import APIView
@@ -15,7 +15,7 @@ from .models import Product
 from django.core.files import File
 
 
-#@extend_schema(summary="Отображает список всех товаров")
+@extend_schema(tags=['Products'], summary="Отображает список всех товаров")
 class ProductList(generics.ListAPIView):
     serializer_class = ProductSerializerList
 
@@ -73,7 +73,7 @@ class ProductList(generics.ListAPIView):
         return queryset.order_by(*args)
 
 
-#@extend_schema(summary="Отображает один конкретный товар")
+@extend_schema(tags=['Products'], summary="Отображает один конкретный товар")
 class ProductDetail(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializerDetail
@@ -92,7 +92,7 @@ class ProductDetail(generics.RetrieveAPIView):
         return context
 
 
-#@extend_schema(summary="Отображает список товаров с категорией 'новинка' или с скидкой")
+@extend_schema(tags=['Products'], summary="Отображает список товаров с категорией 'новинка' или с скидкой")
 class ProductMain(generics.ListAPIView):
     pagination_class = None
     serializer_class = ProductSerializerList
@@ -101,7 +101,7 @@ class ProductMain(generics.ListAPIView):
         queryset = Product.objects.filter(Q(category__name='Новинка') | Q(category__name='Выгодно')).order_by("-total_rate", "-discount")
         return queryset
 
-
+@extend_schema(tags=['Reviews'], summary="Создание корзины")
 class ReviewCreate(generics.CreateAPIView):
     permission_classes = (IsAuthenticated,)
     model = Review
@@ -114,6 +114,7 @@ class ReviewCreate(generics.CreateAPIView):
         serializer.save(author=self.request.user)
 
 
+@extend_schema(tags=['Reviews'], summary="Список отзывов")
 class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializerList
     pagination_class = None
@@ -124,14 +125,15 @@ class ReviewList(generics.ListAPIView):
         queryset = Review.objects.filter(product=product)
         return queryset
 
-
+@extend_schema(tags=['Other'], summary="Возвращает список категорий")
 class CategoryList(generics.ListAPIView):
     serializer_class = CategorySerializer
     pagination_class = None
     queryset = Category.objects.all()
 
-
+@extend_schema(tags=['Other'], summary="Запуск импорта")
 class ProductImportAPIView(APIView):
+    serializer_class = None
     def post(self, request, format=None):
         serializer = ProductImportSerializer(data=request.data)
         if not serializer.is_valid():

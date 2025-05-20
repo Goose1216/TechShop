@@ -2,6 +2,7 @@ from dj_rest_auth.views import APIView
 from rest_framework.views import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
 from django.contrib.auth.models import AnonymousUser
+from drf_spectacular.utils import extend_schema
 
 from .models import Cart, CartItem
 from products.models import Product
@@ -12,7 +13,9 @@ from uuid import UUID
 import datetime
 
 
+@extend_schema(tags=['Carts'], summary="Удаление корзины")
 class DeleteCartView(APIView):
+    serializer_class = None
     def delete(self, request):
         try:
             cart_uuid = json.loads(request.COOKIES.get('cart'))
@@ -48,8 +51,9 @@ class DeleteCartView(APIView):
             return Response({"message": "Ошибка запроса"}, status=400)
 
 
+@extend_schema(tags=['Carts'], summary="Для получепния информации о колиестве товаров в корзине")
 class CartCount(APIView):
-    """Для получепния информации о колиестве товаров в корзине"""
+    serializer_class = None
     def get(self, request, **kwargs):
         try:
             cart_uuid_cookie = request.COOKIES.get('cart')
@@ -79,6 +83,9 @@ class CartCount(APIView):
 
 
 def get_or_create_cart(cart_uuid=None, user=None):
+    """
+    Функция для получения корзины или её создания, если она не существует
+    """
     try:
         if isinstance(user, AnonymousUser):
             user = None
@@ -104,8 +111,9 @@ def get_or_create_cart(cart_uuid=None, user=None):
     except Exception as error:
         raise error
 
-
+@extend_schema(tags=['Carts'], summary="Список товаров в корзине")
 class CartItemList(APIView):
+    serializer_class = None
     def get(self, request):
         try:
 
@@ -131,8 +139,9 @@ class CartItemList(APIView):
         except Exception as e:
             return Response({"message": "Ошибка запроса"}, status=400)
 
-
+@extend_schema(tags=['Carts'], summary="Добавление товаров в корзину")
 class CartItemAdd(APIView):
+    serializer_class = None
     def post(self, request):
         try:
 
@@ -181,7 +190,9 @@ class CartItemAdd(APIView):
             return Response({"message": "Ошибка запроса"}, status=400)
 
 
+@extend_schema(tags=['Carts'], summary="Обновление информации о товаре в корзине")
 class CartItemUpdate(APIView):
+    serializer_class = None
     def put(self, request, product_id):
         try:
             data = request.data
@@ -232,7 +243,9 @@ class CartItemUpdate(APIView):
             return Response({"message": "Ошибка запроса"}, status=400)
 
 
+@extend_schema(tags=['Carts'], summary="Удаление товара из корзины")
 class CartItemDelete(APIView):
+    serializer_class = None
     def delete(self, request, product_id):
         try:
             pk = product_id
