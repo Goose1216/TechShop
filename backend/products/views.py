@@ -10,7 +10,6 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
 from .serializers import ProductImportSerializer
 from .models import Product
 from django.core.files import File

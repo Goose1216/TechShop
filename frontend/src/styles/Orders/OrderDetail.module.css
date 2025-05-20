@@ -1,0 +1,174 @@
+.orderDetailContainer {
+    max-width: 1200px;
+    min-height: 700px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    color: #333;
+}
+
+.orderHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.orderHeader h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.orderStatus {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.orderStatus[data-status="в обработке"] {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.orderStatus[data-status="в пути"] {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.orderStatus[data-status="готов"] {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.orderStatus[data-status="отменён"] {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.orderInfo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+    .orderInfo {
+        grid-template-columns: 1fr;
+    }
+}
+
+.orderInfoSection {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.orderInfoSection h2 {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #495057;
+}
+
+.orderInfoSection p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.orderInfoSection strong {
+    display: inline-block;
+    width: 150px;
+    color: #6c757d;
+}
+
+.orderItems h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.itemsList {
+    margin-bottom: 30px;
+}
+
+.orderItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.orderItem:last-child {
+    border-bottom: none;
+}
+
+.itemInfo h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.itemInfo p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.itemTotal {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.orderTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.totalLabel {
+    color: #495057;
+}
+
+.totalAmount {
+    color: #28a745;
+    font-size: 20px;
+}
+
+.error {
+    color: #dc3545;
+    background: #f8d7da;
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+@media (max-width: 576px) {
+    .orderHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .orderItem {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .orderInfoSection strong {
+        width: 100px;
+    }
+}

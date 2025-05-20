@@ -93,3 +93,6 @@ class OrderDetail(RetrieveAPIView):
     serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
     lookup_field = 'uuid'
+
+    def get_queryset(self):
+        return Order.objects.filter(client=self.request.user)

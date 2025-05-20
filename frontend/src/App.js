@@ -11,6 +11,7 @@ import YandexAuth from './components/Users/YandexAuth';
 import UserProfile from './components/Users/UserProfile';
 import CartPage from './components/Cart/CartPage'
 import OrderCreate from './components/Orders/OrderCreate'
+import OrderDetail from './components/Orders/OrderDetail'
 import OrderList from './components/Orders/OrderWindow'
 import { CartProvider } from './CartContext';
 
@@ -28,8 +29,9 @@ const App = () => {
                     <Route path="/login/google" element={<GoogleAuth />} />
                     <Route path="/login/yandex" element={<YandexAuth />} />
                     <Route path="/user" element={<UserProfile />} />
-                     <Route path="/orders" element={<OrderList />} />
-                     <Route path="/create_order" element={<OrderCreate />} />
+                    <Route path="/orders" element={<OrderList />} />
+                    <Route path="/order/:uuid" element={<OrderDetail />} />
+                    <Route path="/create_order" element={<OrderCreate />} />
                     <Route path="/:slug" element={<ProductDetail />} />
                 </Routes>
                 <Footer />

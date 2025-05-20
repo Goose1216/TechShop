@@ -217,7 +217,7 @@ const CartPage = () => {
 
               <div className="item-details">
                 <h3>
-                  <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>
+                  <Link to={`/${item.product.slug}`}>{item.product.name}</Link>
                 </h3>
                 <p className="item-brand">{item.product.brand}</p>
 
