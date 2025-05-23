@@ -223,7 +223,7 @@ SPECTACULAR_SETTINGS = {
 # OpenSearch
 OPENSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'
+        'hosts': os.environ.get('OPENSEARCH_HOST', 'http://localhost:9200/')
     },
     'secure': {
         'hosts': [{"scheme": "https", "host": "192.30.255.112", "port": 9201}],

@@ -3,13 +3,13 @@ services:
   back:
     build: ./backend
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - OPENSEARCH_HOST=http://opensearch-node:9200/
     volumes:
       - static_volume:/src/static
       - media_volume:/src/media
     ports:
       - "8000:8000"
-    depends_on:
-      - db
 
   front:
     build: ./frontend
@@ -26,8 +26,27 @@ services:
     ports:
       - "6379:6379"
 
+  opensearch-node:
+    image: opensearchproject/opensearch:2.19.2
+    container_name: opensearch-node
+    environment:
+      - DISABLE_SECURITY_PLUGIN=true
+      - discovery.type=single-node
+      - node.name=opensearch-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - '9200:9200'
+
 
 volumes:
   redis_data:
   static_volume:
   media_volume:
+  opensearch-data:
