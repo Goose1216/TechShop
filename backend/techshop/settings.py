@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.yandex",
     'drf_spectacular',
+    'django_opensearch_dsl',
 
     #locals
     'products.apps.ProductsConfig',
@@ -219,4 +220,14 @@ SPECTACULAR_SETTINGS = {
     'USE_SESSION_AUTH': False
 }
 
-
+# OpenSearch
+OPENSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+    'secure': {
+        'hosts': [{"scheme": "https", "host": "192.30.255.112", "port": 9201}],
+        'http_auth': ("admin", "password"),
+        'timeout': 120,
+    },
+}

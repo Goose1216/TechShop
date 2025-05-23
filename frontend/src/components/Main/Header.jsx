@@ -104,8 +104,12 @@ const Header = () => {
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
-            if (activeSuggestion >= 0) {
-                handleSuggestionClick(suggestions[activeSuggestion].name);
+            e.preventDefault();
+            if (activeSuggestion >= 0 && suggestions.length > 0) {
+                const selectedSuggestion = suggestions[activeSuggestion].name;
+                setQuery(selectedSuggestion);
+                navigate(`/products?q=${encodeURIComponent(selectedSuggestion)}`);
+                setSuggestions([]);
             } else {
                 handleSearch(e);
             }

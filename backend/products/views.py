@@ -1,19 +1,16 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.validators import ValidationError
-
-from .models import Product, Review, Category
-from .serializers import ProductSerializerList, ProductSerializerDetail, ReviewSerializerCreate, ReviewSerializerList, CategorySerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 from django.db.models import F, Func, Q
 from django.contrib.auth.models import AnonymousUser
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import ProductImportSerializer
-from .models import Product
 from django.core.files import File
 
+from .models import Product, Review, Category
+from .serializers import ProductSerializerList, ProductSerializerDetail, ReviewSerializerCreate, ReviewSerializerList, CategorySerializer, ProductImportSerializer
+from .documents import ProductDocument
 
 @extend_schema(tags=['Products'], summary="Отображает список всех товаров")
 class ProductList(generics.ListAPIView):
@@ -24,7 +21,7 @@ class ProductList(generics.ListAPIView):
 
         query = self.request.query_params.get("q")
         if query:
-            queryset = self.search_products(queryset, query)
+            queryset = self.search_products(query)
 
         brand = self.request.query_params.get("brand")
         if brand:
@@ -42,16 +39,15 @@ class ProductList(generics.ListAPIView):
         return queryset
 
     @staticmethod
-    def search_products(queryset, query):
-        # Несмотря на icontains запрос регистрочувствительный
-        query_list = query.split(' ')
-        for query in query_list:
-            queryset = queryset.filter(
-                Q(name__icontains=query) |
-                Q(brand__name__icontains=query) |
-                Q(category__name__icontains=query)
-            ).distinct()
-        return queryset
+    def search_products(query):
+        s = ProductDocument.search()
+        s = s.query(
+            "multi_match",
+            query=query,
+            fields=["name", "category.name", "brand.name"],
+            fuzziness="AUTO"
+        )
+        return s.to_queryset()
 
     @staticmethod
     def filter_by_brand(queryset, brand):
