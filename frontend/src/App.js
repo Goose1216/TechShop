@@ -13,6 +13,10 @@ import CartPage from './components/Cart/CartPage'
 import OrderCreate from './components/Orders/OrderCreate'
 import OrderDetail from './components/Orders/OrderDetail'
 import OrderList from './components/Orders/OrderWindow'
+import EmailVerification from './components/Users/SendEmailVerifications'
+import EmailConfirmPage from './components/Users/EmailVerificationAccept'
+import PasswordReset from './components/Users/PasswordReset'
+import PasswordResetEmail from './components/Users/PasswordResetEmail'
 import { CartProvider } from './CartContext';
 
 const App = () => {
@@ -32,6 +36,10 @@ const App = () => {
                     <Route path="/orders" element={<OrderList />} />
                     <Route path="/order/:uuid" element={<OrderDetail />} />
                     <Route path="/create_order" element={<OrderCreate />} />
+                    <Route path="/email_verification" element={<EmailVerification />} />
+                    <Route path="/email_verification/:key" element={<EmailConfirmPage />} />
+                    <Route path="/password_reset" element={<PasswordResetEmail />} />
+                    <Route path="/password_reset_confirm/:uid/:key" element={<PasswordReset />} />
                     <Route path="/:slug" element={<ProductDetail />} />
                 </Routes>
                 <Footer />

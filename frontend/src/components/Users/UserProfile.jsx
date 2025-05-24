@@ -222,6 +222,44 @@ const UserProfile = () => {
                 </div>
 
                 <div className={styles.formGroup}>
+                    <label htmlFor="email">Электронная почта</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        readOnly
+                        className={errors.email ? styles.errorInput : ''}
+                    />
+                    {errors.email && (
+                        <span className={styles.fieldError}>{errors.email}</span>
+                    )}
+
+                    <div className={styles.emailVerificationRow}>
+                        {user?.email_verified ? (
+                            <span className={styles.emailVerified}>
+                                <span className={styles.verifiedIcon} title="Почта подтверждена">✔️</span>
+                                <span className={styles.verifiedText}>Почта подтверждена</span>
+                            </span>
+                        ) : (
+                            <span className={styles.emailNotVerified}>
+                                <span className={styles.notVerifiedIcon} title="Почта не подтверждена">❌</span>
+                                <span className={styles.notVerifiedText}>Почта не подтверждена</span>
+                                <button
+                                    className={styles.verifyButton}
+                                    onClick={() => window.location.href = '/email_verification'}
+                                    type="button"
+                                >
+                                    Подтвердить
+                                </button>
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+
+                <div className={styles.formGroup}>
                     <label htmlFor="first_name">Имя</label>
                     <input
                         type="text"

@@ -214,6 +214,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
+ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
+
 # Allauth
 SITE_ID = 1
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
@@ -244,3 +246,4 @@ OPENSEARCH_DSL = {
         'timeout': 120,
     },
 }
+

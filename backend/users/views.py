@@ -14,6 +14,7 @@ from dj_rest_auth.views import (
 from dj_rest_auth.registration.views import RegisterView, VerifyEmailView, ResendEmailVerificationView
 
 from cart.models import Cart, CartItem
+from .serializers import CustomUserSerializer
 
 @extend_schema(tags=['Users'], summary="Авторизация пользователей через Google")
 class GoogleLoginView(SocialLoginView):
@@ -148,6 +149,7 @@ class CustomLogoutView(LogoutView):
 
 @extend_schema(tags=['Users'], summary='Получение и обновление информации о пользователе')
 class UserDetailsView(UserDetailsView):
+    serializer_class = CustomUserSerializer
     pass
 
 @extend_schema(tags=['Users'], summary='Изменение пароля')
