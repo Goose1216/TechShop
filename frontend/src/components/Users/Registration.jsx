@@ -39,23 +39,28 @@ const Registration = ({ onClose, switchToLogin }) => {
             setToken(token);
             switchToLogin();
         } catch (error) {
-            if (error.response && error.response.data) {
-                const responseData = error.response.data;
+            if (error.response) {
+                if (error.response.status === 500) {
+                    setNonFieldErrors('Внутренняя ошибка сервера. Попробуйте позже.');
+                }
+                else if (error.response.data) {
+                    const responseData = error.response.data;
 
-                if (responseData.email) {
-                    setEmailError(responseData.email[0]);
-                }
-                if (responseData.username) {
-                    setUsernameError(responseData.username[0]);
-                }
-                if (responseData.password1) {
-                    setPassword1Error(responseData.password1[0]);
-                }
-                if (responseData.password2) {
-                    setPassword2Error(responseData.password2[0]);
-                }
-                if (responseData.non_field_errors) {
-                    setPassword2Error(responseData.non_field_errors[0]);
+                    if (responseData.email) {
+                        setEmailError(responseData.email[0]);
+                    }
+                    if (responseData.username) {
+                        setUsernameError(responseData.username[0]);
+                    }
+                    if (responseData.password1) {
+                        setPassword1Error(responseData.password1[0]);
+                    }
+                    if (responseData.password2) {
+                        setPassword2Error(responseData.password2[0]);
+                    }
+                    if (responseData.non_field_errors) {
+                        setPassword2Error(responseData.non_field_errors[0]);
+                    }
                 }
             } else {
                 setNonFieldErrors('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
