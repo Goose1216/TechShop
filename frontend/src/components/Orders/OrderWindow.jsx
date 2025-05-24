@@ -2,14 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import orderStyles from '../../styles/Orders/Order.module.css';
 import { useLocation, Link } from 'react-router-dom';
+import { getToken } from '../../authStorage';
 import blockStyle from '../../styles/BlockStyle.module.css';
 
-const OrderList = ({ token }) => {
+const OrderList = () => {
     const [orders, setOrders] = useState([]);
     const [sortingOption, setSortingOption] = useState('Сначала новые');
     const [sortChoice, setSortChoice] = useState(false);
     const location = useLocation();
     const [loading, setLoading] = useState(true);
+    const token = getToken();
 
     const sortWindowRef = useRef(null);
 
