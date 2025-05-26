@@ -1,17 +1,16 @@
-from dj_rest_auth.views import APIView
-from rest_framework.views import Response
-from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
-from django.contrib.auth.models import AnonymousUser
-from drf_spectacular.utils import extend_schema, OpenApiResponse
-
-from .models import Cart, CartItem
-from products.models import Product
-from .serializers import CartSerializer, PkSerializer, DummySerializer
-
 import json
 from uuid import UUID
 import datetime
 
+from dj_rest_auth.views import APIView
+from rest_framework.views import Response
+from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
+from django.contrib.auth.models import AnonymousUser
+from drf_spectacular.utils import extend_schema
+
+from .models import Cart, CartItem
+from products.models import Product
+from .serializers import CartSerializer, PkSerializer, DummySerializer
 
 @extend_schema(tags=['Carts'], summary="Удаление корзины")
 class DeleteCartView(APIView):
@@ -51,7 +50,7 @@ class DeleteCartView(APIView):
             return Response({"message": "Ошибка запроса"}, status=400)
 
 
-@extend_schema(tags=['Carts'], summary="Для получепния информации о колиестве товаров в корзине")
+@extend_schema(tags=['Carts'], summary="Для получения информации о количестве товаров в корзине")
 class CartCount(APIView):
     serializer_class = None
     def get(self, request, **kwargs):

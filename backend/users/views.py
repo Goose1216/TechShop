@@ -1,5 +1,6 @@
 import json
 import datetime
+import logging
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.yandex.views import YandexAuth2Adapter
@@ -15,6 +16,8 @@ from dj_rest_auth.registration.views import RegisterView, VerifyEmailView, Resen
 
 from cart.models import Cart, CartItem
 from .serializers import CustomUserSerializer
+
+logger = logging.getLogger('backend')
 
 @extend_schema(tags=['Users'], summary="Авторизация пользователей через Google")
 class GoogleLoginView(SocialLoginView):
