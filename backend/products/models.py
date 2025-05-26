@@ -42,7 +42,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100, unique=True, db_index=True, verbose_name='Название товара')
     slug = models.SlugField(editable=False)
-    discount = models.PositiveIntegerField(default=0, verbose_name="Скидка в процентах")
+    discount = models.PositiveIntegerField(default=0, blank=True, verbose_name="Скидка в процентах")
     price_standart = models.PositiveIntegerField(verbose_name="Цена стандартная")
     price = models.PositiveIntegerField(db_index=True, editable=False, verbose_name="Цена конечная")
     image = models.ImageField(upload_to='covers', blank=True, null=True, verbose_name="Изображение")

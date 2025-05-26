@@ -8,6 +8,15 @@ statuses = [
     ('4', 'Отменён'),
 ]
 
+class OrderCreateSerializer(serializers.Serializer):
+    phone = serializers.RegexField(
+        regex=r'^(?:\+7|8)\d{10}$',
+        error_messages={"invalid": "Телефонный номер должен быть в формате +79999999999 или 89999999999"}
+    )
+    email = serializers.EmailField()
+    name_client = serializers.CharField(min_length=1)
+    address = serializers.CharField(min_length=1)
+
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = serializers.StringRelatedField(read_only=True)

@@ -79,6 +79,14 @@ class ProductDocument(Document):
         }
         related_models = [Category, Brand]
 
+    def get_instances_from_related(self, related_instance):
+        model = self.django.model
+        if isinstance(related_instance, Category):
+            return model.objects.filter(category=related_instance)
+        if isinstance(related_instance, Brand):
+            return model.objects.filter(brand=related_instance)
+        return super().get_instances_from_related(related_instance)
+
     category = fields.ObjectField(properties={
         'name': fields.TextField(),
     })

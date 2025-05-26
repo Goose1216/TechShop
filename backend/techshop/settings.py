@@ -258,14 +258,14 @@ LOGGING = {
             "filename": "logs/documents.log",
         },
         "console": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
         },
     },
     "loggers": {
         "backend": {
             "handlers": ["file", "console"],
-            "level": "INFO",
+            "level": "DEBUG",
             "propagate": False,
         },
     },
