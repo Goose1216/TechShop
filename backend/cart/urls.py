@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CartItemList, CartItemAdd, CartItemDelete, CartItemUpdate, DeleteCartView, CartCount
+from .views import CartItemList, CartItemAdd, CartItemDelete, CartItemUpdate, DeleteCartView, CartCount, run_task
 
 
 urlpatterns = [
@@ -9,5 +9,7 @@ urlpatterns = [
     path("update/<int:product_id>/", CartItemUpdate.as_view(), name="cart_item_update"),
     path("count/", CartCount.as_view(), name="cart_count"),
     path("delete/", DeleteCartView.as_view(), name="cart_delete"),
+    path("task/", run_task, name='run_tasks'),
+
 ]
 

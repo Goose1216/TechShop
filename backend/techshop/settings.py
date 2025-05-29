@@ -25,10 +25,10 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(ujcj&$g_+@1-!5h@$tm+8*4^hst3lul&=in6$5lidck!i0ppg'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = []
 
@@ -265,9 +265,12 @@ LOGGING = {
     "loggers": {
         "backend": {
             "handlers": ["file", "console"],
-            "level": "DEBUG",
+            "level": os.environ.get('LOGGING_LEVEL', "DEBUG"),
             "propagate": False,
         },
     },
 }
 
+#celery
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")

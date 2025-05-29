@@ -15,7 +15,7 @@ class CartAdmin(admin.ModelAdmin):
         CartItemInline,
     ]
     list_filter = ["user", ]
-    list_display = ['id', 'user', 'created_at']
+    list_display = ['id', 'user', 'created_at', 'last_updated']
 
 
 admin.site.register(Cart, CartAdmin)

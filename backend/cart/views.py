@@ -1,8 +1,9 @@
 import json
 from uuid import UUID
-import datetime
 
 from dj_rest_auth.views import APIView
+from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import permission_classes, api_view
 from rest_framework.views import Response
 from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
 from django.contrib.auth.models import AnonymousUser
@@ -11,6 +12,9 @@ from drf_spectacular.utils import extend_schema
 from .models import Cart, CartItem
 from products.models import Product
 from .serializers import CartSerializer, PkSerializer, DummySerializer
+from .tasks import delete_all_old_cart
+
+WEEK_SECONDS = 7 * 24 * 60 * 60
 
 @extend_schema(tags=['Carts'], summary="Удаление корзины")
 class DeleteCartView(APIView):
@@ -125,8 +129,7 @@ class CartItemList(APIView):
 
             response = Response({'message': 'Корзина получена', **CartSerializer(cart, context={'request': self.request}).data}, status=200)
 
-            week = datetime.datetime.now() + datetime.timedelta(days=7)
-            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(),
+            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=WEEK_SECONDS,
                                 secure=True, samesite='None')
 
             return response
@@ -183,8 +186,7 @@ class CartItemAdd(APIView):
                 response = Response({'message': 'Товар добавлен'}, status=200)
 
             cart.save()
-            week = datetime.datetime.now() + datetime.timedelta(days=7)
-            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(),
+            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=WEEK_SECONDS,
                                 secure=True, samesite='None')
 
             return response
@@ -236,8 +238,7 @@ class CartItemUpdate(APIView):
             response = Response({'message': message}, status=200)
 
             cart.save()
-            week = datetime.datetime.now() + datetime.timedelta(days=7)
-            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(),
+            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=WEEK_SECONDS,
                                 secure=True, samesite='None')
 
             return response
@@ -282,8 +283,7 @@ class CartItemDelete(APIView):
             response = Response({'message': message}, status=200)
 
             cart.save()
-            week = datetime.datetime.now() + datetime.timedelta(days=7)
-            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=week.timestamp(),
+            response.set_cookie('cart', json.dumps(str(cart.id)), max_age=WEEK_SECONDS,
                                 secure=True, samesite='None')
 
             return response
@@ -296,3 +296,13 @@ class CartItemDelete(APIView):
             return Response({"message": str(e)}, status=404)
         except Exception as e:
             return Response({"message": "Ошибка запроса"}, status=400)
+
+@extend_schema(
+    tags=['Other'],
+    summary="Ручной запуск celery task",
+)
+@api_view(["POST"])
+@permission_classes([IsAdminUser])
+def run_task(request):
+    delete_all_old_cart.delay()
+    return Response({'message': "Задача запущена"}, status=200)

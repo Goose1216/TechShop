@@ -26,6 +26,17 @@ services:
     ports:
       - "6379:6379"
 
+  celery:
+    build: ./backend
+    command: celery -A techshop worker --loglevel=info
+    env_file:
+      - backend/.env
+    volumes:
+      - static_volume:/src/static
+      - media_volume:/src/media
+    depends_on:
+      - redis
+
   opensearch-node:
     image: opensearchproject/opensearch:2.19.2
     container_name: opensearch-node
